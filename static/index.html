@@ -248,6 +248,8 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
       <div class="field"><label for="f-cantidad">Cuánto quiere cosechar</label><input id="f-cantidad" placeholder="Ej: 40 quintales"><small>kg, quintales o toneladas</small></div>
       <div class="field"><label for="f-inicio">Fecha de inicio de siembra</label><input id="f-inicio" placeholder="Ej: 15 de mayo"><small>Reemplaza el mes si lo llena</small></div>
       <div class="field"><label for="f-fin">Fecha límite para cosechar</label><input id="f-fin" placeholder="Ej: fin de agosto"><small>Descarta cultivos que no alcanzan</small></div>
+      <div class="field"><label for="f-prior">Qué es más importante para usted</label>
+        <select id="f-prior"><option value="equilibrio">Equilibrio entre ganancia y ambiente</option><option value="quimicos">Usar menos químicos</option><option value="ganancia">Mayor ganancia</option></select><small>Cambia el orden de las sugerencias</small></div>
       <div class="field"><label for="f-enso">Pronóstico de la temporada</label>
         <select id="f-enso"><option value="normal">Año normal (promedio histórico)</option><option value="nino">El Niño (Pacífico más seco)</option><option value="nina">La Niña (Pacífico más lluvioso)</option></select><small>Consulte el aviso vigente del IMN</small></div>
     </div>
@@ -261,6 +263,7 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
     <p class="note" id="parseNote"></p>
   </form>
   <section class="grid2" id="summary"></section>
+  <section class="panel" id="climUsed"></section>
   <section style="display:grid;gap:14px">
     <div class="section-head"><h2>Qué le conviene sembrar</h2><p class="muted" id="cardsLead"></p></div>
     <div class="cards" id="cards"></div>
@@ -480,8 +483,8 @@ const LUGARES=[
  ["Pérez Zeledón","PS",700],["San Isidro de El General","PS",700],["Buenos Aires","PS",400],["Coto Brus","PS",1000],["San Vito","PS",1000],["Pacífico Sur","PS",650],
  ["Corredores","ZS",30],["Ciudad Neily","ZS",30],["Golfito","ZS",20],["Osa","ZS",50],["Palmar Norte","ZS",30],["Zona Sur","ZS",40]
 ];
-const FAM={Poa:"Gramíneas",Fab:"Leguminosas",Sol:"Solanáceas",Bra:"Crucíferas",Cuc:"Cucurbitáceas",Ama:"Aliáceas",Api:"Umbelíferas",Eup:"Euforbiáceas",Con:"Convolvuláceas",Ast:"Compuestas"};
-const NEXT_FAM={Sol:["Fab","Poa"],Poa:["Fab","Cuc"],Fab:["Poa","Sol","Bra","Cuc"],Bra:["Fab","Api"],Cuc:["Poa","Fab"],Ama:["Fab","Poa"],Api:["Fab","Bra"],Eup:["Fab","Poa"],Con:["Poa","Fab"],Ast:["Fab","Bra"]};
+const FAM={Rub:"Rubiáceas",Mus:"Musáceas",Mal:"Malváceas",Are:"Palmas",Rut:"Rutáceas",Ana:"Anacardiáceas",Car:"Caricáceas",Lau:"Lauráceas",Ros:"Rosáceas",Pas:"Pasifloráceas",Ara:"Aráceas",Dio:"Dioscoreáceas",Zin:"Zingiberáceas",Pip:"Piperáceas",Amr:"Amarantáceas",Bro:"Bromeliáceas",Poa:"Gramíneas",Fab:"Leguminosas",Sol:"Solanáceas",Bra:"Crucíferas",Cuc:"Cucurbitáceas",Ama:"Aliáceas",Api:"Umbelíferas",Eup:"Euforbiáceas",Con:"Convolvuláceas",Ast:"Compuestas"};
+const NEXT_FAM={Amr:["Fab","Poa"],Ara:["Fab","Poa"],Dio:["Fab","Poa"],Zin:["Fab","Poa"],Sol:["Fab","Poa"],Poa:["Fab","Cuc"],Fab:["Poa","Sol","Bra","Cuc"],Bra:["Fab","Api"],Cuc:["Poa","Fab"],Ama:["Fab","Poa"],Api:["Fab","Bra"],Eup:["Fab","Poa"],Con:["Poa","Fab"],Ast:["Fab","Bra"]};
 
 /* Cultivos. Valores aproximados de demostración. */
 const CULTIVOS=[
@@ -534,7 +537,75 @@ const CULTIVOS=[
  {id:"pepino",n:"Pepino",ic:"🥒",al:["pepino","pepinos"],fam:"Cuc",t:[20,30],alt:[0,1500],d:70,w:[250,500],dryH:false,wl:.1,dt:.3,ero:"medio",y:30,p:350,seed:{q:20000,u:"plantas",x:"≈ 1 kg de semilla"},c:{sem:250000,fert:600000,plag:500000,herb:60000,mo:1000000},nNeed:"medio",frost:true,
   pests:[{n:"Mildiú velloso",k:"lluvia",tip:"Fungicida preventivo"},{n:"Mosca blanca y virosis",k:"seco",tip:"Trampas amarillas"}],comp:[{id:"maiz",w:"El maíz sirve de tutor natural"}]},
  {id:"canavalia",n:"Canavalia (abono verde)",ic:"🌱",al:["canavalia","abono verde","mucuna","frijol de abono"],fam:"Fab",t:[20,32],alt:[0,1400],d:120,w:[400,1500],dryH:false,wl:.4,dt:.8,ero:"bajo",y:0,p:0,cover:true,seed:{q:80,u:"kg",x:"al espeque"},c:{sem:80000,fert:0,plag:0,herb:20000,mo:100000},nNeed:"bajo",nfix:true,frost:true,pests:[],comp:[]},
+ /* --- Hortalizas --- */
+ {id:"brocoli",n:"Brócoli",ic:"🥦",al:["brocoli"],fam:"Bra",t:[13,22],alt:[1200,2800],d:90,w:[300,600],dryH:false,wl:.2,dt:.3,ero:"medio",y:15,p:600,seed:{q:35000,u:"plántulas",x:"almácigo"},c:{sem:400000,fert:650000,plag:550000,herb:80000,mo:900000},nNeed:"alto",frost:false,quim:3,
+  pests:[{n:"Palomilla dorso de diamante",k:"seco",tip:"Revisar el envés de las hojas"},{n:"Pudrición negra",k:"lluvia",tip:"Semilla sana y rotación"}],comp:[{id:"culantro",w:"Atrae avispitas que controlan la palomilla"},{id:"cebolla",w:"Su olor confunde a algunas plagas"}]},
+ {id:"coliflor",n:"Coliflor",ic:"🥦",al:["coliflor"],fam:"Bra",t:[13,21],alt:[1300,2800],d:95,w:[300,600],dryH:false,wl:.2,dt:.3,ero:"medio",y:14,p:550,seed:{q:33000,u:"plántulas",x:"almácigo"},c:{sem:380000,fert:650000,plag:550000,herb:80000,mo:900000},nNeed:"alto",frost:false,quim:3,
+  pests:[{n:"Palomilla dorso de diamante",k:"seco",tip:"Revisar el envés de las hojas"},{n:"Pudrición negra",k:"lluvia",tip:"Semilla sana y rotación"}],comp:[{id:"culantro",w:"Atrae avispitas que controlan la palomilla"}]},
+ {id:"vainica",n:"Vainica",ic:"🫛",al:["vainica","ejote","habichuela"],fam:"Fab",t:[16,26],alt:[600,1800],d:70,w:[250,500],dryH:false,wl:.15,dt:.3,ero:"medio",y:10,p:700,seed:{q:60,u:"kg",x:"siembra directa"},c:{sem:180000,fert:300000,plag:350000,herb:60000,mo:900000},nNeed:"bajo",nfix:true,frost:true,quim:2,
+  pests:[{n:"Antracnosis",k:"fresco_humedo",tip:"Semilla sana, no trabajar el cultivo mojado"},{n:"Mosca blanca",k:"seco",tip:"Trampas amarillas"}],comp:[{id:"maiz",w:"Le sirve de tutor y aprovecha su nitrógeno"}]},
+ {id:"chayote",n:"Chayote",ic:"🌱",al:["chayote","tacaco"],fam:"Cuc",t:[16,26],alt:[600,1800],d:120,w:[600,1500],dryH:false,wl:.2,dt:.3,ero:"medio",y:60,p:200,per:true,est:2500000,seed:{q:625,u:"frutos-semilla",x:"en espaldera de 4 × 4 m"},c:{sem:150000,fert:800000,plag:600000,herb:100000,mo:1500000},nNeed:"medio",frost:true,quim:2,
+  pests:[{n:"Mildiú velloso",k:"lluvia",tip:"Poda de ventilación"},{n:"Mosca blanca",k:"seco",tip:"Trampas amarillas"}],comp:[{id:"vainica",w:"Leguminosa en los pasillos aporta nitrógeno"}]},
+ {id:"berenjena",n:"Berenjena",ic:"🍆",al:["berenjena"],fam:"Sol",t:[22,32],alt:[0,800],d:120,w:[400,800],dryH:false,wl:.1,dt:.3,ero:"alto",y:30,p:400,seed:{q:12000,u:"plántulas",x:"almácigo"},c:{sem:360000,fert:800000,plag:700000,herb:60000,mo:1500000},nNeed:"alto",frost:true,quim:2,
+  pests:[{n:"Mosca blanca",k:"seco",tip:"Trampas amarillas"},{n:"Phytophthora y antracnosis",k:"lluvia",tip:"Camas altas y drenaje"}],comp:[{id:"culantro",w:"Atrae insectos benéficos"}]},
+ {id:"chilepic",n:"Chile picante",ic:"🌶️",al:["chile picante","jalapeno","picante","chile panameno"],fam:"Sol",t:[20,30],alt:[0,1200],d:150,w:[450,900],dryH:false,wl:.1,dt:.3,ero:"alto",y:15,p:900,seed:{q:25000,u:"plántulas",x:"almácigo"},c:{sem:700000,fert:900000,plag:900000,herb:60000,mo:1800000},nNeed:"alto",frost:true,quim:2,
+  pests:[{n:"Picudo del chile",k:"seco",tip:"Recoger frutos caídos"},{n:"Mosca blanca",k:"seco",tip:"Trampas amarillas"},{n:"Phytophthora y antracnosis",k:"lluvia",tip:"Camas altas"}],comp:[{id:"culantro",w:"Atrae enemigos naturales de plagas"}]},
+ {id:"melon",n:"Melón",ic:"🍈",al:["melon"],fam:"Cuc",t:[24,32],alt:[0,400],d:75,w:[200,450],dryH:true,wl:.1,dt:.4,ero:"bajo",y:25,p:400,seed:{q:0.6,u:"kg",x:"semilla híbrida"},c:{sem:400000,fert:700000,plag:700000,herb:80000,mo:800000},nNeed:"medio",frost:true,quim:3,
+  pests:[{n:"Mildiú y antracnosis",k:"lluvia",tip:"Sembrar para cosechar en verano"},{n:"Mosca blanca y virosis",k:"seco",tip:"Trampas y cobertura"},{n:"Gusano del fruto",k:"calor",tip:"Revisar frutos pequeños"}],comp:[{id:"maiz",w:"Franjas de maíz cortan el viento"}]},
+ {id:"remolacha",n:"Remolacha",ic:"🌱",al:["remolacha","betabel"],fam:"Amr",t:[14,24],alt:[1000,2600],d:80,w:[300,600],dryH:false,wl:.1,dt:.3,ero:"alto",root:true,y:30,p:350,seed:{q:12,u:"kg",x:"siembra directa"},c:{sem:150000,fert:500000,plag:250000,herb:120000,mo:700000},nNeed:"medio",frost:false,quim:2,
+  pests:[{n:"Mancha de la hoja (Cercospora)",k:"lluvia",tip:"Rotar y no mojar las hojas"}],comp:[{id:"lechuga",w:"Raíces a distinta profundidad"}]},
+ {id:"rabano",n:"Rábano",ic:"🌱",al:["rabano"],fam:"Bra",t:[12,24],alt:[800,2600],d:35,w:[100,300],dryH:false,wl:.1,dt:.2,ero:"medio",root:true,y:15,p:400,seed:{q:20,u:"kg",x:"siembra directa"},c:{sem:120000,fert:250000,plag:100000,herb:50000,mo:400000},nNeed:"bajo",frost:false,quim:1,
+  pests:[{n:"Palomilla dorso de diamante",k:"seco",tip:"Cosechar a tiempo"}],comp:[{id:"lechuga",w:"Se cosecha antes y aprovecha el espacio"},{id:"zanahoria",w:"Marca los surcos de la zanahoria"}]},
+ {id:"apio",n:"Apio",ic:"🥬",al:["apio"],fam:"Api",t:[14,22],alt:[1200,2600],d:120,w:[400,800],dryH:false,wl:.2,dt:.2,ero:"medio",y:40,p:300,seed:{q:60000,u:"plántulas",x:"almácigo"},c:{sem:480000,fert:700000,plag:400000,herb:80000,mo:1200000},nNeed:"alto",frost:false,quim:2,
+  pests:[{n:"Mancha de la hoja (Cercospora)",k:"lluvia",tip:"Ventilación y rotación"}],comp:[{id:"repollo",w:"Su olor aleja a la palomilla del repollo"}]},
+ {id:"espinaca",n:"Espinaca",ic:"🥬",al:["espinaca"],fam:"Amr",t:[12,22],alt:[1200,2600],d:50,w:[150,350],dryH:false,wl:.15,dt:.15,ero:"medio",y:12,p:700,seed:{q:25,u:"kg",x:"siembra directa"},c:{sem:200000,fert:350000,plag:150000,herb:60000,mo:600000},nNeed:"medio",frost:false,quim:1,
+  pests:[{n:"Mildiú y esclerotinia",k:"lluvia",tip:"Camas altas y ventilación"}],comp:[{id:"rabano",w:"Ciclos cortos que se complementan"}]},
+ /* --- Raíces y tubérculos --- */
+ {id:"tiquizque",n:"Tiquizque",ic:"🌱",al:["tiquizque","malanga","ñampi","nampi"],fam:"Ara",t:[22,30],alt:[0,800],d:300,w:[1200,2500],dryH:false,wl:.4,dt:.3,ero:"alto",root:true,y:15,p:450,seed:{q:15000,u:"cormos",x:"semilla sana"},c:{sem:600000,fert:400000,plag:150000,herb:200000,mo:900000},nNeed:"medio",frost:true,auto:true,quim:1,
+  pests:[{n:"Pudrición de raíz",k:"lluvia",tip:"Lomillos y drenaje"}],comp:[{id:"frijol",w:"Ocupa la calle los primeros meses"}]},
+ {id:"name",n:"Ñame",ic:"🍠",al:["ñame","name"],fam:"Dio",t:[24,32],alt:[0,600],d:270,w:[1000,2000],dryH:false,wl:.15,dt:.4,ero:"alto",root:true,y:20,p:500,seed:{q:10000,u:"trozos de tubérculo",x:"de 150 g"},c:{sem:900000,fert:500000,plag:300000,herb:200000,mo:1200000},nNeed:"medio",frost:true,auto:true,quim:2,
+  pests:[{n:"Antracnosis",k:"lluvia",tip:"Semilla sana y tutorado"}],comp:[{id:"maiz",w:"Sirve de tutor al inicio"}]},
+ {id:"jengibre",n:"Jengibre",ic:"🫚",al:["jengibre"],fam:"Zin",t:[22,30],alt:[0,900],d:270,w:[1200,2500],dryH:false,wl:.15,dt:.3,ero:"alto",root:true,y:20,p:700,seed:{q:2000,u:"kg de rizoma",x:"trozos con yemas"},c:{sem:2000000,fert:600000,plag:300000,herb:200000,mo:1500000},nNeed:"medio",frost:true,quim:2,
+  pests:[{n:"Pudrición de raíz",k:"lluvia",tip:"Camas altas"},{n:"Nematodos",k:"siempre",tip:"Semilla sana y rotación"}],comp:[]},
+ {id:"curcuma",n:"Cúrcuma",ic:"🫚",al:["curcuma"],fam:"Zin",t:[22,30],alt:[0,900],d:270,w:[1200,2500],dryH:false,wl:.2,dt:.3,ero:"alto",root:true,y:20,p:600,seed:{q:1500,u:"kg de rizoma",x:"trozos con yemas"},c:{sem:1200000,fert:500000,plag:200000,herb:200000,mo:1300000},nNeed:"medio",frost:true,quim:1,
+  pests:[{n:"Pudrición de raíz",k:"lluvia",tip:"Camas altas"}],comp:[]},
+ /* --- Frutas y cultivos permanentes --- */
+ {id:"fresa",n:"Fresa",ic:"🍓",al:["fresa","frutilla"],fam:"Ros",t:[13,22],alt:[1300,2400],d:120,w:[300,700],dryH:false,wl:.1,dt:.2,ero:"alto",y:30,p:1500,per:true,est:1500000,seed:{q:50000,u:"plantas",x:"plántulas certificadas"},c:{sem:1500000,fert:1200000,plag:1500000,herb:100000,mo:3000000},nNeed:"medio",frost:true,quim:3,
+  pests:[{n:"Moho gris (Botrytis)",k:"fresco_humedo",tip:"Cobertura plástica y quitar frutos dañados"},{n:"Mosca blanca y ácaros",k:"seco",tip:"Revisar el envés"}],comp:[{id:"culantro",w:"Atrae insectos benéficos"}]},
+ {id:"cana",n:"Caña de azúcar",ic:"🎋",al:["caña","cana de azucar","caña de azucar"],fam:"Poa",t:[24,34],alt:[0,1500],d:365,w:[1000,2500],dryH:true,wl:.4,dt:.5,ero:"medio",mech:true,y:80,p:25,per:true,est:0,seed:{q:10000,u:"kg de esquejes",x:"semilla de 3 yemas"},c:{sem:600000,fert:500000,plag:100000,herb:200000,mo:600000},nNeed:"alto",frost:true,quim:2,
+  pests:[{n:"Salivazo",k:"lluvia",tip:"Monitorear al inicio de las lluvias"}],comp:[{id:"frijol",w:"Asocio en la calle el primer año"}]},
+ {id:"pina",n:"Piña",ic:"🍍",al:["piña","pina"],fam:"Bro",t:[22,32],alt:[0,800],d:480,w:[1000,2500],dryH:false,wl:.1,dt:.6,ero:"alto",y:80,p:150,seed:{q:65000,u:"hijos",x:"semilla seleccionada"},c:{sem:2500000,fert:2000000,plag:1500000,herb:400000,mo:2000000},nNeed:"alto",frost:true,quim:3,
+  pests:[{n:"Cochinilla y marchitez",k:"seco",tip:"Semilla sana y control de hormigas"},{n:"Pudrición del corazón",k:"lluvia",tip:"Camas altas y drenaje"}],comp:[]},
+ {id:"papaya",n:"Papaya",ic:"🌱",al:["papaya"],fam:"Car",t:[22,32],alt:[0,1000],d:270,w:[800,2000],dryH:false,wl:.1,dt:.4,ero:"medio",y:50,p:350,per:true,est:500000,seed:{q:2000,u:"plantas",x:"almácigo"},c:{sem:0,fert:900000,plag:700000,herb:150000,mo:1500000},nNeed:"alto",frost:true,quim:2,
+  pests:[{n:"Virus de la mancha anular",k:"seco",tip:"Eliminar plantas enfermas y controlar áfidos"},{n:"Antracnosis",k:"lluvia",tip:"Cosechar a tiempo"}],comp:[{id:"frijol",w:"Leguminosa en la calle los primeros meses"}]},
+ {id:"platano",n:"Plátano",ic:"🍌",al:["platano"],fam:"Mus",t:[24,32],alt:[0,900],d:365,w:[1500,3000],dryH:false,wl:.3,dt:.2,ero:"medio",y:25,p:300,per:true,est:800000,seed:{q:1600,u:"cormos",x:"semilla limpia"},c:{sem:0,fert:900000,plag:500000,herb:200000,mo:1200000},nNeed:"alto",frost:true,auto:true,quim:2,
+  pests:[{n:"Sigatoka negra",k:"calido_humedo",tip:"Deshoja sanitaria cada 2 semanas"},{n:"Picudo negro",k:"siempre",tip:"Semilla limpia y trampas"}],comp:[{id:"cacao",w:"Le da sombra temporal al cacao joven"}]},
+ {id:"banano",n:"Banano",ic:"🍌",al:["banano","guineo","cuadrado"],fam:"Mus",t:[24,32],alt:[0,700],d:330,w:[1500,3000],dryH:false,wl:.3,dt:.2,ero:"medio",y:40,p:200,per:true,est:1000000,seed:{q:1800,u:"plantas",x:"vitroplantas o cormos"},c:{sem:0,fert:1200000,plag:900000,herb:250000,mo:1500000},nNeed:"alto",frost:true,auto:true,quim:3,
+  pests:[{n:"Sigatoka negra",k:"calido_humedo",tip:"Deshoja sanitaria"},{n:"Picudo negro",k:"siempre",tip:"Trampas de seudotallo"}],comp:[]},
+ {id:"cafe",n:"Café",ic:"☕",al:["cafe"],fam:"Rub",t:[17,25],alt:[600,1700],d:1095,w:[1500,2500],dryH:false,wl:.2,dt:.3,ero:"medio",y:1.8,p:3000,per:true,shade:true,est:2500000,seed:{q:5000,u:"plantas",x:"almácigo de 6–8 meses"},c:{sem:0,fert:900000,plag:400000,herb:200000,mo:1800000},nNeed:"alto",frost:true,quim:2,
+  pests:[{n:"Roya",k:"calido_humedo",tip:"Variedad tolerante, sombra regulada y nutrición"},{n:"Ojo de gallo",k:"fresco_humedo",tip:"Regular la sombra y ventilar"},{n:"Broca del café",k:"seco",tip:"Recoger granos caídos (repela)"}],comp:[{id:"platano",w:"Sombra temporal y otro ingreso"}]},
+ {id:"cacao",n:"Cacao",ic:"🍫",al:["cacao"],fam:"Mal",t:[22,32],alt:[0,800],d:1095,w:[1500,3000],dryH:false,wl:.3,dt:.3,ero:"bajo",y:0.6,p:2500,per:true,shade:true,est:2000000,seed:{q:1100,u:"plantas injertadas",x:"clones tolerantes a monilia"},c:{sem:0,fert:400000,plag:200000,herb:150000,mo:900000},nNeed:"medio",frost:true,quim:1,
+  pests:[{n:"Moniliasis",k:"lluvia",tip:"Quitar mazorcas enfermas cada semana"},{n:"Mazorca negra",k:"lluvia",tip:"Poda y drenaje"}],comp:[{id:"platano",w:"Sombra temporal los primeros años"}]},
+ {id:"palma",n:"Palma aceitera",ic:"🌴",al:["palma","palma aceitera","palma africana"],fam:"Are",t:[24,33],alt:[0,500],d:1095,w:[1800,3500],dryH:false,wl:.5,dt:.3,ero:"bajo",y:20,p:100,per:true,est:2500000,seed:{q:143,u:"plantas",x:"vivero de 12 meses"},c:{sem:0,fert:900000,plag:150000,herb:200000,mo:700000},nNeed:"alto",frost:true,quim:2,
+  pests:[{n:"Pudrición del cogollo",k:"lluvia",tip:"Drenaje y nutrición"},{n:"Gusanos defoliadores",k:"seco",tip:"Monitoreo de hojas"}],comp:[]},
+ {id:"pejibaye",n:"Pejibaye (palmito)",ic:"🌴",al:["pejibaye","palmito"],fam:"Are",t:[22,32],alt:[0,1000],d:540,w:[1500,3500],dryH:false,wl:.3,dt:.3,ero:"bajo",y:8,p:400,per:true,est:1500000,seed:{q:5000,u:"plantas",x:"sin espinas"},c:{sem:0,fert:700000,plag:100000,herb:200000,mo:1200000},nNeed:"alto",frost:true,quim:1,
+  pests:[{n:"Pudrición del cogollo",k:"lluvia",tip:"Drenaje"}],comp:[]},
+ {id:"naranja",n:"Naranja",ic:"🍊",al:["naranja","citricos","limon","mandarina"],fam:"Rut",t:[22,32],alt:[0,1200],d:1095,w:[1000,2000],dryH:false,wl:.15,dt:.4,ero:"bajo",y:25,p:120,per:true,est:2000000,seed:{q:400,u:"plantas injertadas",x:"de vivero certificado"},c:{sem:0,fert:700000,plag:500000,herb:200000,mo:900000},nNeed:"medio",frost:true,quim:2,
+  pests:[{n:"Mosca de la fruta",k:"calor",tip:"Recoger frutos caídos"},{n:"Psílido de los cítricos",k:"seco",tip:"Vigilar brotes nuevos (transmite el HLB)"}],comp:[{id:"frijol",w:"Leguminosa entre hileras los primeros años"}]},
+ {id:"mango",n:"Mango",ic:"🥭",al:["mango"],fam:"Ana",t:[24,34],alt:[0,700],d:1460,w:[700,1500],dryH:true,wl:.15,dt:.6,ero:"bajo",y:12,p:400,per:true,est:1500000,seed:{q:100,u:"plantas injertadas",x:"de vivero"},c:{sem:0,fert:500000,plag:400000,herb:150000,mo:800000},nNeed:"medio",frost:true,quim:2,
+  pests:[{n:"Antracnosis",k:"lluvia",tip:"Poda y cosecha oportuna"},{n:"Mosca de la fruta",k:"calor",tip:"Recoger frutos caídos"}],comp:[]},
+ {id:"aguacate",n:"Aguacate",ic:"🥑",al:["aguacate","palta"],fam:"Lau",t:[16,26],alt:[1200,2400],d:1460,w:[1200,2000],dryH:false,wl:.1,dt:.3,ero:"medio",y:10,p:1200,per:true,est:3000000,seed:{q:278,u:"plantas injertadas",x:"Hass u otra variedad de altura"},c:{sem:0,fert:900000,plag:500000,herb:150000,mo:1200000},nNeed:"medio",frost:true,quim:2,
+  pests:[{n:"Pudrición de raíz",k:"lluvia",tip:"Sembrar en lomillo; no tolera encharcamiento"},{n:"Trips",k:"seco",tip:"Revisar en floración"}],comp:[]},
+ {id:"mora",n:"Mora",ic:"🫐",al:["mora"],fam:"Ros",t:[12,20],alt:[1400,2800],d:240,w:[1200,2500],dryH:false,wl:.15,dt:.3,ero:"medio",y:10,p:1200,per:true,est:1500000,seed:{q:2500,u:"plantas",x:"acodos sanos"},c:{sem:0,fert:700000,plag:600000,herb:100000,mo:2000000},nNeed:"medio",frost:false,quim:2,
+  pests:[{n:"Moho gris (Botrytis)",k:"fresco_humedo",tip:"Poda y cosecha frecuente"},{n:"Mildiú velloso",k:"lluvia",tip:"Ventilación"}],comp:[]},
+ {id:"maracuya",n:"Maracuyá",ic:"🌱",al:["maracuya","granadilla","parcha"],fam:"Pas",t:[22,30],alt:[0,1200],d:240,w:[800,1800],dryH:false,wl:.15,dt:.3,ero:"medio",y:15,p:600,per:true,est:2000000,seed:{q:1100,u:"plantas",x:"en espaldera"},c:{sem:0,fert:700000,plag:500000,herb:150000,mo:1200000},nNeed:"medio",frost:true,quim:2,
+  pests:[{n:"Antracnosis",k:"lluvia",tip:"Poda y ventilación"},{n:"Trips",k:"seco",tip:"Revisar flores"}],comp:[]},
+ {id:"pimienta",n:"Pimienta",ic:"🌱",al:["pimienta"],fam:"Pip",t:[22,32],alt:[0,600],d:1095,w:[1800,3000],dryH:false,wl:.2,dt:.2,ero:"medio",y:2,p:4000,per:true,shade:true,est:3000000,seed:{q:1600,u:"plantas",x:"con tutor vivo"},c:{sem:0,fert:500000,plag:200000,herb:150000,mo:1200000},nNeed:"medio",frost:true,quim:1,
+  pests:[{n:"Pudrición de raíz",k:"lluvia",tip:"Drenaje y lomillos"}],comp:[]},
 ];
+const QUIM={maiz:2,frijol:2,arroz:3,papa:3,tomate:3,chile:3,cebolla:3,zanahoria:2,repollo:3,lechuga:2,yuca:1,camote:1,ayote:1,sandia:2,mani:1,sorgo:1,culantro:2,pepino:2,canavalia:1};
+CULTIVOS.forEach(c=>{if(!c.quim)c.quim=QUIM[c.id]||2;});
+const QUIM_TXT={1:"bajo",2:"medio",3:"alto"};
 
 /* Plan semanal por cultivo: tipo de etapas, días de fertilización, aporque, tutoreo, semanas de cosecha, distancia orientativa, almácigo */
 const PLAN={
@@ -557,6 +628,38 @@ const PLAN={
  culantro:{tipo:"hoja",fert:[0,20],cos:2,dist:"chorrillo en hileras a 20 cm"},
  pepino:{tipo:"guia",fert:[0,15,30,45],tutor:15,cos:5,dist:"1,5 m entre surcos, 30 cm entre plantas"},
  canavalia:{tipo:"abono",fert:[],cos:0,dist:"50 × 50 cm al espeque"},
+ brocoli:{tipo:"hoja",fert:[0,20,40],cos:2,dist:"60 × 40 cm",alm:true},
+ coliflor:{tipo:"hoja",fert:[0,20,40],cos:2,dist:"60 × 45 cm",alm:true},
+ vainica:{tipo:"guia",fert:[0,20],tutor:15,cos:3,dist:"80 cm entre surcos, 10 cm entre plantas"},
+ chayote:{tipo:"guia",fert:[0,40,80],tutor:10,cos:6,dist:"4 × 4 m en espaldera"},
+ berenjena:{tipo:"fruto",fert:[0,20,40,60,80],tutor:30,cos:6,dist:"1,2 m × 60 cm",alm:true},
+ chilepic:{tipo:"fruto",fert:[0,25,50,75,100],tutor:30,cos:8,dist:"1,2 m × 40 cm",alm:true},
+ melon:{tipo:"guia",fert:[0,20,40],cos:2,dist:"2 m × 0,5 m"},
+ remolacha:{tipo:"raiz",fert:[0,30],cos:1,dist:"camas, hileras a 20 cm, 8 cm entre plantas"},
+ rabano:{tipo:"raiz",fert:[0],cos:1,dist:"hileras a 15 cm, 3 cm entre plantas"},
+ apio:{tipo:"hoja",fert:[0,30,60],cos:2,dist:"40 × 30 cm",alm:true},
+ espinaca:{tipo:"hoja",fert:[0,20],cos:2,dist:"hileras a 20 cm"},
+ tiquizque:{tipo:"yuca",fert:[30,90,150],aporque:[60],cos:4,dist:"1 × 0,5 m"},
+ name:{tipo:"yuca",fert:[30,90],tutor:30,cos:3,dist:"1,2 × 0,6 m"},
+ jengibre:{tipo:"yuca",fert:[30,90,150],aporque:[60,120],cos:3,dist:"camas, 25 × 20 cm"},
+ curcuma:{tipo:"yuca",fert:[30,90,150],aporque:[60,120],cos:3,dist:"camas, 25 × 20 cm"},
+ fresa:{tipo:"fruto",fert:[0,30,60,90],cos:6,dist:"camas de 4 hileras, 30 cm entre plantas",alm:true},
+ cana:{tipo:"grano",fert:[30,90],cos:4,dist:"1,5 m entre surcos"},
+ pina:{tipo:"perenne",fert:[30,90,150,210,270,330],dist:"camas dobles, 30 × 30 cm"},
+ papaya:{tipo:"fruto",fert:[30,90,150,210],cos:8,dist:"3 × 2 m",alm:true},
+ platano:{tipo:"fruto",fert:[30,90,150,210,270],cos:4,dist:"3 × 2 m"},
+ banano:{tipo:"fruto",fert:[30,90,150,210,270],cos:4,dist:"3 × 2,5 m"},
+ cafe:{tipo:"perenne",fert:[30,120,240],dist:"2 × 1 m (5 000 plantas/ha)",alm:true},
+ cacao:{tipo:"perenne",fert:[60,180,300],dist:"3 × 3 m"},
+ palma:{tipo:"perenne",fert:[60,180,300],dist:"9 m en triángulo (143 plantas/ha)"},
+ pejibaye:{tipo:"perenne",fert:[60,180,300],dist:"2 × 1 m"},
+ naranja:{tipo:"perenne",fert:[60,180,300],dist:"6 × 4 m"},
+ mango:{tipo:"perenne",fert:[60,180,300],dist:"10 × 10 m"},
+ aguacate:{tipo:"perenne",fert:[60,180,300],dist:"7 × 5 m"},
+ mora:{tipo:"fruto",fert:[30,90,150,210],tutor:30,cos:4,dist:"2 × 2 m en espaldera"},
+ maracuya:{tipo:"fruto",fert:[30,90,150],tutor:20,cos:6,dist:"3 × 3 m en espaldera"},
+ pimienta:{tipo:"perenne",fert:[60,180,300],tutor:0,dist:"2,5 × 2,5 m con tutor vivo"},
+
 };
 const ETAPAS={
  grano:[["Germinación",.1],["Crecimiento",.4],["Floración",.2],["Llenado de grano",.2],["Maduración",.1]],
@@ -566,6 +669,7 @@ const ETAPAS={
  guia:[["Emergencia",.12],["Guías",.3],["Floración",.2],["Llenado de frutos",.23],["Cosecha",.15]],
  yuca:[["Brotación",.07],["Crecimiento",.33],["Engrosamiento de raíces",.45],["Maduración",.15]],
  abono:[["Emergencia",.1],["Crecimiento",.6],["Floración",.3]],
+ perenne:[["Establecimiento",.3],["Crecimiento vegetativo",.7]],
 };
 /* Etapa fenológica: descripción, qué vigilar y qué tan delicada es (0–2) */
 const STAGE_INFO={
@@ -586,6 +690,8 @@ const STAGE_INFO={
  "Formación de raíz o bulbo":{d:"Engrosa la raíz, el tubérculo o el bulbo.",v:"Tubérculos expuestos al sol (aporque), pudriciones, humedad pareja del suelo.",crit:2},
  "Engrosamiento de raíces":{d:"Las raíces de la yuca engordan.",v:"Pudrición de raíz por encharcamiento, ácaros en verano, malezas.",crit:2},
  "Maduración":{d:"El cultivo termina de madurar.",v:"Humedad del grano o firmeza, momento justo de cosecha, roedores y pájaros.",crit:1},
+ "Establecimiento":{d:"La planta se adapta al campo y forma raíces. Primer año de un cultivo permanente.",v:"Plantas muertas o marchitas, hormigas y zompopas, malezas que compiten, humedad del suelo.",crit:1},
+ "Crecimiento vegetativo":{d:"La planta forma tallo, ramas y hojas. Todavía no produce.",v:"Color de las hojas, plagas en brotes nuevos, sombra adecuada y formación (poda).",crit:1},
  "Cosecha":{d:"Se recoge la producción.",v:"Punto de corte, no golpear el producto, precio del día y período de carencia de lo aplicado.",crit:1},
 };
 /* Opciones de control de menor impacto ambiental por plaga (sin dosis: siga la etiqueta y al técnico) */
@@ -640,6 +746,7 @@ const PROD={
  paecilomyces:{n:"Paecilomyces lilacinus",t:"Hongo contra nematodos",ha:[1,2],u:"kg",x:"Al suelo, antes o al momento de sembrar."},
  feromona:{n:"Trampas con feromona",t:"Monitoreo y captura",trap:[4,6],u:"trampas",x:"Cambiar la feromona según el fabricante."},
  amarilla:{n:"Trampas amarillas pegajosas",t:"Captura de mosca blanca, áfidos y paratrioza",trap:[20,40],u:"trampas",x:"A la altura del cultivo; cambiar cuando estén llenas."},
+ mfruta:{n:"Trampas con atrayente para mosca de la fruta",t:"Monitoreo y captura",trap:[10,20],u:"trampas",x:"Atrayente de proteína; recoja y entierre los frutos caídos."},
  azul:{n:"Trampas azules pegajosas",t:"Captura de trips",trap:[20,40],u:"trampas",x:"A la altura de las flores."},
 };
 const PEST_PROD={"Gusano cogollero":["bt"],"Mancha de asfalto":["bsubtilis"],"Chicharrita y achaparramiento":["beauveria","metarhizium"],"Mustia hilachosa":["trichoderma","bsubtilis"],"Antracnosis":["cobre"],
@@ -648,7 +755,10 @@ const PEST_PROD={"Gusano cogollero":["bt"],"Mancha de asfalto":["bsubtilis"],"Ch
  "Mosca blanca":["amarilla","jabon"],"Phytophthora y antracnosis":["trichoderma","cobre"],"Trips":["azul","jabon","beauveria"],"Mancha púrpura y mildiú":["bsubtilis","cobre"],"Alternaria (quema de hoja)":["bsubtilis","cobre"],
  "Nematodos":["paecilomyces"],"Palomilla dorso de diamante":["bt"],"Pudrición negra":["cobre"],"Mildiú y esclerotinia":["trichoderma"],"Áfidos":["jabon","neem"],"Mosca blanca y ácaros":["jabon","azufre"],
  "Pudrición de raíz":["trichoderma"],"Tetuán del camote":["beauveria","feromona"],"Mildiú polvoso y velloso":["azufre","cobre"],"Mildiú y antracnosis":["cobre"],"Gusano del fruto":["bt"],
- "Mancha de la hoja (Cercospora)":["cobre"],"Pulgón amarillo":["jabon"],"Mancha bacteriana":["cobre"],"Mildiú velloso":["cobre"]};
+ "Mancha de la hoja (Cercospora)":["cobre"],"Pulgón amarillo":["jabon"],"Mancha bacteriana":["cobre"],"Mildiú velloso":["cobre"],
+ "Moho gris (Botrytis)":["bsubtilis","trichoderma"],"Salivazo":["metarhizium"],"Cochinilla y marchitez":["jabon","beauveria"],"Pudrición del corazón":["trichoderma"],"Virus de la mancha anular":["amarilla","jabon"],
+ "Sigatoka negra":["bsubtilis"],"Picudo negro":["feromona","beauveria"],"Roya":["cobre"],"Ojo de gallo":["cobre"],"Broca del café":["beauveria"],"Moniliasis":["cobre"],"Mazorca negra":["trichoderma","cobre"],
+ "Pudrición del cogollo":["trichoderma"],"Gusanos defoliadores":["bt"],"Mosca de la fruta":["mfruta"],"Psílido de los cítricos":["amarilla","jabon"],};
 /* Programa de fertilización orientativo por cultivo (kg por hectárea en cada aplicación, alineado con PLAN.fert). Ajustar con análisis de suelo. */
 const FERT={
  maiz:[[["10-30-10",260]],[["Nitrato de amonio",130]],[["Nitrato de amonio",130]]],
@@ -668,11 +778,43 @@ const FERT={
  mani:[[["10-30-10",150]]],
  sorgo:[[["10-30-10",150]],[["Urea",100]]],
  culantro:[[["10-30-10",200]],[["Nitrato de amonio",100]]],
+
+ brocoli:[[["10-30-10",350]],[["Nitrato de amonio",150]],[["Nitrato de amonio",150]]],
+ coliflor:[[["10-30-10",350]],[["Nitrato de amonio",150]],[["Nitrato de amonio",150]]],
+ vainica:[[["10-30-10",200]],[["15-15-15",100]]],
+ chayote:[[["10-30-10",300]],[["15-15-15",200]],[["Nitrato de potasio",150]]],
+ berenjena:[[["10-30-10",400]],[["15-15-15",150]],[["15-15-15",150]],[["Nitrato de potasio",100]],[["Nitrato de potasio",100]]],
+ chilepic:[[["10-30-10",300]],[["15-15-15",150]],[["15-15-15",150]],[["Nitrato de potasio",100]],[["Nitrato de potasio",100]]],
+ melon:[[["10-30-10",300]],[["15-15-15",200]],[["Nitrato de potasio",150]]],
+ remolacha:[[["10-30-10",350]],[["15-15-15",150]]],
+ rabano:[[["10-30-10",150]]],
+ apio:[[["10-30-10",350]],[["Nitrato de amonio",150]],[["Nitrato de potasio",100]]],
+ espinaca:[[["10-30-10",250]],[["Nitrato de amonio",100]]],
+ tiquizque:[[["15-15-15",200]],[["15-15-15",200]],[["Cloruro de potasio",100]]],
+ name:[[["15-15-15",250]],[["Cloruro de potasio",100]]],
+ jengibre:[[["10-30-10",300]],[["15-15-15",250]],[["Cloruro de potasio",150]]],
+ curcuma:[[["10-30-10",300]],[["15-15-15",250]],[["Cloruro de potasio",150]]],
+ fresa:[[["10-30-10",400]],[["15-15-15",200]],[["Nitrato de potasio",150]],[["Nitrato de potasio",150]]],
+ cana:[[["10-30-10",300]],[["Nitrato de amonio",250]]],
+ pina:[[["10-30-10",300]],[["Urea",150]],[["Urea",150]],[["Nitrato de potasio",150]],[["Nitrato de potasio",150]],[["Nitrato de potasio",150]]],
+ papaya:[[["10-30-10",200]],[["15-15-15",200]],[["15-15-15",200]],[["Nitrato de potasio",150]]],
+ platano:[[["10-30-10",150]],[["Urea",100]],[["Cloruro de potasio",150]],[["Urea",100]],[["Cloruro de potasio",150]]],
+ banano:[[["10-30-10",150]],[["Urea",120]],[["Cloruro de potasio",180]],[["Urea",120]],[["Cloruro de potasio",180]]],
+ cafe:[[["10-30-10",100]],[["Nitrato de amonio",100]],[["15-15-15",150]]],
+ cacao:[[["10-30-10",80]],[["15-15-15",100]],[["15-15-15",100]]],
+ palma:[[["10-30-10",100]],[["15-15-15",150]],[["Cloruro de potasio",150]]],
+ pejibaye:[[["10-30-10",150]],[["15-15-15",200]],[["Nitrato de amonio",150]]],
+ naranja:[[["10-30-10",100]],[["15-15-15",150]],[["15-15-15",150]]],
+ mango:[[["10-30-10",100]],[["15-15-15",150]],[["15-15-15",150]]],
+ aguacate:[[["10-30-10",100]],[["15-15-15",150]],[["15-15-15",150]]],
+ mora:[[["10-30-10",200]],[["15-15-15",200]],[["Nitrato de potasio",150]],[["Nitrato de potasio",150]]],
+ maracuya:[[["10-30-10",200]],[["15-15-15",200]],[["Nitrato de potasio",150]]],
+ pimienta:[[["10-30-10",100]],[["15-15-15",150]],[["15-15-15",150]]],
  pepino:[[["10-30-10",300]],[["15-15-15",150]],[["Nitrato de potasio",100]],[["Nitrato de potasio",100]]],
 };
 const FERT_TIP={"10-30-10":"En el fondo del surco o en banda a 5 cm de la semilla, tapado.","15-15-15":"En banda a 5–10 cm de la planta, con el suelo húmedo, y tapar.","Nitrato de amonio":"Alrededor de la planta sin tocar el tallo, con el suelo húmedo, y tapar.","Urea":"Con el suelo húmedo y tapado; no dejar al sol porque se pierde.","Cloruro de potasio":"En banda junto a la planta y tapar.","Nitrato de potasio":"En banda o disuelto en el riego.","Nitrato de calcio":"Disuelto en el riego o en banda; no mezclar con fertilizantes que lleven fósforo."};
 function fertHTML(f,ha){return`<ul class="prods"><li><b>Fertilización ${f.n} de ${f.of}</b> <span class="muted">· día ${f.day}</span>${f.items.map(([p,kg])=>{const t=kg*ha;return`<br><b>${esc(p)}</b>: ${nf(t,0)} kg para ${nf(ha,2)} ha (≈ ${nf(Math.round(t/46*2)/2,1)} sacos de 46 kg; ${nf(kg,0)} kg/ha). ${esc(FERT_TIP[p]||"")}`;}).join("")}</li></ul>`;}
-const VOL={grano:200,fruto:400,hoja:300,raiz:300,guia:300,yuca:250,abono:200};
+const VOL={grano:200,fruto:400,hoja:300,raiz:300,guia:300,yuca:250,abono:200,perenne:400};
 const nf=(x,d)=>x.toLocaleString("es-CR",{maximumFractionDigits:d??(x<10?1:0)});
 function rango(a,b,u){if(u==="ml"&&b>=1000)return`${nf(a/1000)}–${nf(b/1000)} L`;if(u==="g"&&b>=1000)return`${nf(a/1000)}–${nf(b/1000)} kg`;if(u==="kg"&&b<1)return`${nf(a*1000)}–${nf(b*1000)} g`;if(u==="L"&&b<1)return`${nf(a*1000)}–${nf(b*1000)} ml`;return`${nf(a)}–${nf(b)} ${u}`;}
 function dosis(key,crop,ha){const P=PROD[key];if(!P)return null;
@@ -682,6 +824,31 @@ function dosis(key,crop,ha){const P=PROD[key];if(!P)return null;
  const a=P.L[0]*agua,b=P.L[1]*agua;return{P,total:rango(a,b,P.u),agua,bombas,bomba:`${nf(P.L[0]*20)}–${nf(P.L[1]*20)} ${P.u}`};}
 function prodHTML(p,crop,ha){const ks=PEST_PROD[p.n]||[];if(!ks.length)return"";
  return`<ul class="prods">${ks.map(k=>{const d=dosis(k,crop,ha);if(!d)return"";return`<li><b>${esc(d.P.n)}</b> <span class="muted">· ${esc(d.P.t)}</span><br>${d.agua?`Para ${nf(ha,2)} ha: <b>${d.total}</b> en ${nf(d.agua,0)} L de agua (≈ ${d.bombas} bombas de 20 L, <b>${d.bomba}</b> por bomba).`:`Para ${nf(ha,2)} ha: <b>${d.total}</b>.`} ${esc(d.P.x)}</li>`;}).join("")}</ul>`;}
+/* Árboles para sembrar cerca: sombra, cerca viva, rompevientos y ayuda contra plagas */
+const TREES={
+ poro:{n:"Poró",sci:"Erythrina poeppigiana",alt:[0,1800],cl:"humedo",sp:2.5,dens:278,dd:"6 × 6 m",b:"Fija nitrógeno; al podarlo, sus ramas y hojas abonan el suelo. Sombra regulable.",pl:"Sus flores y su follaje atraen aves e insectos benéficos que comen plagas."},
+ guaba:{n:"Guaba",sci:"Inga spp.",alt:[0,2000],cl:"humedo",sp:4,dens:156,dd:"8 × 8 m",b:"Fija nitrógeno, da fruta y leña; su hojarasca protege el suelo.",pl:"Sus flores atraen avispas y hormigas que controlan plagas."},
+ madero:{n:"Madero negro",sci:"Gliricidia sepium",alt:[0,1200],cl:"todos",sp:2,dens:1600,dd:"uno por planta, como tutor vivo",b:"Cerca viva de rápido crecimiento; fija nitrógeno y sus hojas sirven de abono verde.",pl:"Conocido como “mata ratón”: ayuda a alejar roedores; sus hojas se usan en preparados repelentes."},
+ nim:{n:"Nim",sci:"Azadirachta indica",alt:[0,800],cl:"seco",sp:4,dens:100,dd:"10 × 10 m",b:"Aguanta la sequía; sombra y rompevientos en zonas secas.",pl:"Con sus hojas y semillas se prepara extracto repelente contra mosca blanca, gusanos y áfidos."},
+ guacimo:{n:"Guácimo",sci:"Guazuma ulmifolia",alt:[0,1200],cl:"seco",sp:4,dens:100,dd:"10 × 10 m",b:"Sombra y forraje para el ganado en la época seca.",pl:"Refugio de aves que comen insectos."},
+ laurel:{n:"Laurel",sci:"Cordia alliodora",alt:[0,1200],cl:"humedo",sp:5,dens:100,dd:"10 × 10 m",b:"Sombra rala para café y cacao, y madera valiosa a futuro.",pl:"La sombra moderada baja el estrés de las plantas y la presión de algunas enfermedades."},
+ jaul:{n:"Jaúl (aliso)",sci:"Alnus acuminata",alt:[1400,3000],cl:"frio",sp:3,dens:100,dd:"10 × 10 m",b:"Árbol de altura que fija nitrógeno; buen rompevientos para papa, hortalizas y lechería.",pl:"Como barrera corta el viento que trae áfidos y trips y reduce el daño a las hojas."},
+ leucaena:{n:"Leucaena",sci:"Leucaena leucocephala",alt:[0,1500],cl:"seco",sp:2,dens:400,dd:"5 × 5 m",b:"Fija nitrógeno; forraje rico en proteína.",pl:"Sus flores atraen insectos benéficos."},
+ platemp:{n:"Plátano (sombra temporal)",sci:"Musa spp.",alt:[0,1000],cl:"humedo",sp:3,dens:1100,dd:"3 × 3 m",b:"Sombra rápida para cacao o café nuevo durante 2–3 años, y da cosecha mientras tanto.",pl:"Mantiene humedad y sombra que protegen a las plantas jóvenes del sol fuerte."},
+};
+const SHADE_TREES={cafe:["poro","guaba","laurel"],cacao:["platemp","laurel","guaba"],pimienta:["madero","poro"]};
+function treeHTML(crop,ctx,ha){
+ const alt=ctx.alt||1000;const dry=(ctx.clim||[]).filter(m=>m.r<60).length;const cl=alt>=1500?"frio":dry>=4?"seco":"humedo";
+ const ok=t=>alt>=TREES[t].alt[0]&&alt<=TREES[t].alt[1];const H=ha||1;
+ let keys,inside=false;
+ if(SHADE_TREES[crop.id]){keys=SHADE_TREES[crop.id].filter(ok);inside=true;}
+ else{keys=Object.keys(TREES).filter(t=>t!=="platemp"&&ok(t)).sort((a,b)=>((TREES[b].cl===cl)-(TREES[a].cl===cl))||((TREES[b].cl==="todos")-(TREES[a].cl==="todos")));}
+ keys=keys.slice(0,2);if(!keys.length)return'<p class="muted">No encontramos un árbol adecuado para esta altitud.</p>';
+ const per=4*Math.sqrt(H*10000);
+ return`<ul class="why">${keys.map(k=>{const t=TREES[k];
+  const where=inside?`<b>Dentro del lote</b>, a ${t.dd} (≈ ${Math.round(t.dens*H).toLocaleString("es-CR")} árboles para ${nf(H,2)} ha). Pódelo para dejar 30–40 % de sombra.`
+   :`<b>En el borde del lote</b>, como cerca viva o rompevientos: uno cada ${nf(t.sp,1)} m (≈ ${Math.ceil(per/t.sp).toLocaleString("es-CR")} árboles para el perímetro de ${nf(H,2)} ha). No lo siembre dentro: ${esc(crop.n.toLowerCase())} necesita sol pleno.`;
+  return`<li><b>${t.n}</b> <span class="muted">(<i>${t.sci}</i>)</span><br>${where}<br>${t.b} <b>Contra plagas:</b> ${t.pl}</li>`;}).join("")}</ul>`;}
 const ETAPA_COL=["var(--sky-soft)","var(--leaf-soft)","var(--ok-soft)","var(--warn-soft)","var(--maize-soft)"];
 
 const SINTOMAS=[
@@ -864,16 +1031,16 @@ function buildClimate(key,alt,enso){const z=ZONAS[key],L=LIVE[key];const baseAlt
 function season(r){return r<60?"Época seca":r<150?"Transición":r<350?"Época lluviosa":"Muy lluviosa";}
 
 /* ===================== MOTOR DE SUGERENCIA ===================== */
-const COND={lluvia:m=>m.r>=200,seco:m=>m.r<60,calor:m=>m.tmax>=31,fresco_humedo:m=>m.t>=10&&m.t<=22&&m.r>=120,calido_humedo:m=>m.t>=23&&m.r>=180,siempre:()=>true};
+const COND={lluvia:m=>m.r>=200,seco:m=>m.r<60,calor:m=>m.tmax>=31,fresco_humedo:m=>m.t>=10&&m.t<=22&&(m.r>=120||(m.h>=88&&m.r>=60)),calido_humedo:m=>m.t>=23&&(m.r>=180||(m.h>=88&&m.r>=100)),siempre:()=>true};
 const COND_TXT={lluvia:"meses muy lluviosos",seco:"meses secos",calor:"días muy calientes",fresco_humedo:"clima fresco y húmedo",calido_humedo:"clima caliente y húmedo",siempre:"cualquier época"};
 const SEV_W={Alta:3,Media:1.5,Baja:.3};
 function evaluate(crop,ctx){
- const n=Math.max(1,Math.round(crop.d/30));const idx=Array.from({length:n},(_,i)=>(ctx.month+i)%12);const ms=idx.map(i=>ctx.clim[i]);const risks=[],why=[];
+ const dEff=Math.min(crop.d,365);const n=Math.max(1,Math.round(dEff/30));const idx=Array.from({length:n},(_,i)=>(ctx.month+i)%12);const ms=idx.map(i=>ctx.clim[i]);const risks=[],why=[];
  const tf=ms.map(m=>{const[lo,hi]=crop.t;return m.t>=lo&&m.t<=hi?1:Math.max(0,1-(m.t<lo?lo-m.t:m.t-hi)/4);});
  const tempFit=.7*tf.reduce((a,b)=>a+b,0)/n+.3*Math.min(...tf);const tAvg=ms.reduce((a,m)=>a+m.t,0)/n;
  if(tempFit>=.85)why.push(`Temperatura adecuada en el ciclo (≈${tAvg.toFixed(0)} °C; ideal ${crop.t[0]}–${crop.t[1]} °C)`);
  else if(tempFit<.6)risks.push({n:tAvg<crop.t[0]?"Clima demasiado frío para este cultivo":"Clima demasiado caliente para este cultivo",s:tempFit<.35?"Alta":"Media",tip:`Promedio ≈${tAvg.toFixed(0)} °C; rinde mejor entre ${crop.t[0]} y ${crop.t[1]} °C`});
- const R=ms.reduce((a,m)=>a+m.r,0)*(crop.d/30)/n;let rainFit=1,deficit=0;
+ const R=ms.reduce((a,m)=>a+m.r,0)*(dEff/30)/n;let rainFit=1,deficit=0;
  if(R<crop.w[0]){deficit=crop.w[0]-R;
   if(ctx.riego===true){rainFit=.92;why.push(`Le falta lluvia (≈${Math.round(R)} mm), pero usted tiene riego`);}
   else{let f=Math.pow(Math.max(0,R/crop.w[0]),1.2);rainFit=f+(1-f)*crop.dt*.5;risks.push({n:"Falta de agua (sequía)",s:rainFit<.5?"Alta":"Media",tip:`Lloverían ≈${Math.round(R)} mm y necesita al menos ${crop.w[0]} mm. ${ctx.riego===null?"Si tiene riego, indíquelo en el terreno.":"Considere riego o mover la fecha."}`});}
@@ -911,6 +1078,8 @@ function evaluate(crop,ctx){
   else{winFit=Math.max(0,1-(crop.d-ctx.windowDays)/60);risks.push({n:"No alcanza a cosechar a tiempo",s:winFit<.4?"Alta":"Media",tip:`Necesita ${crop.d} días y usted tiene ${ctx.windowDays}.`});}}
  const pests=crop.pests.map(p=>{const c=ms.filter(COND[p.k]).length;const f=c/n;const s=p.k==="siempre"?"Baja":f>=.5?"Alta":c>0?"Media":"Baja";return{...p,s,when:COND_TXT[p.k]};}).sort((a,b)=>SEV_W[b.s]-SEV_W[a.s]);
  const highPests=pests.filter(p=>p.s==="Alta").length;
+ const hAvg=ms.reduce((a,m)=>a+(m.h||0),0)/n;
+ if(hAvg>=88&&crop.pests.some(p=>/lluvia|humedo/.test(p.k)))risks.push({n:`Humedad muy alta (≈${Math.round(hAvg)} %)`,s:"Media",tip:"Favorece hongos y bacterias: más distancia entre plantas, poda y ventilación."});
  const climate=.55*tempFit+.45*rainFit;
  const yFactor=clamp(.45+.55*climate,.3,1)*clamp(altFit+.3,0,1)*clamp(.5+.5*terrFit,0,1);
  const yHa=crop.y*yFactor;const ha=ctx.ha||1;
@@ -918,13 +1087,16 @@ function evaluate(crop,ctx){
  const plagF=1+.3*highPests+.1*pests.filter(p=>p.s==="Media").length;
  const costHa={sem:crop.c.sem,fert:crop.c.fert,plag:crop.c.plag*plagF,herb:crop.c.herb,mo:crop.c.mo,riego:riegoCost};
  const costTotHa=Object.values(costHa).reduce((a,b)=>a+b,0);const incomeHa=yHa*1000*crop.p;const marginHa=incomeHa-costTotHa;
- const econ=crop.cover?.3:marginHa<=0?.15:Math.min(1,.35+marginHa/3.5e6);
+ const mEcon=marginHa-(crop.est||0)/5;const econ=crop.cover?.3:mEcon<=0?.15:Math.min(1,.35+mEcon/3.5e6);
  let purpFit;
  if(ctx.purpose==="forraje")purpFit=crop.forage?1:.45;else if(ctx.purpose==="autoconsumo")purpFit=crop.auto?1:.5;else if(ctx.purpose==="venta"||ctx.purpose==="exportacion")purpFit=econ;else purpFit=.6*econ+.25;
  if(ctx.purpose==="forraje"&&crop.forage)why.push("Sirve como alimento para el ganado");
  if(ctx.purpose==="autoconsumo"&&crop.auto)why.push("Buen cultivo para la alimentación de la familia");
  if((ctx.purpose==="venta"||!ctx.purpose)&&marginHa>1.5e6&&!crop.cover)why.push(`Buena ganancia estimada por hectárea (${crc(marginHa)})`);
  let score=100*(.26*tempFit+.26*rainFit+.10*altFit+.12*terrFit+.12*rotFit+.06*winFit+.08*purpFit);
+ const qm=ctx.prior==="quimicos"?{1:1,2:.88,3:.72}[crop.quim]:ctx.prior==="ganancia"?1:{1:1,2:.97,3:.92}[crop.quim];score*=qm;
+ if(ctx.prior==="quimicos"&&crop.quim===1)why.unshift("Necesita pocos químicos: se maneja con control biológico y prácticas culturales");
+ if(ctx.prior==="ganancia")score=score*.85+15*econ;
  score*=Math.max(.6,1-.07*highPests-.02*pests.filter(p=>p.s==="Media").length);
  if(altFit<.35)score*=.6;if(tempFit<.4)score*=.7;score=clamp(Math.round(score),1,99);
  let rs=risks.reduce((a,r)=>a+SEV_W[r.s],0)+pests.reduce((a,p)=>a+(p.s==="Alta"?2:p.s==="Media"?.7:0),0);if(marginHa<0&&!crop.cover)rs+=1.5;
@@ -955,12 +1127,32 @@ function readCtx(){const notes=[];const place=findPlace($("#f-lugar").value);let
  const want=findCrop($("#f-producto").value);
  if($("#f-producto").value.trim()&&!want)notes.push(`Aún no evaluamos “${$("#f-producto").value.trim()}”. Disponibles: ${CULTIVOS.filter(c=>!c.cover).map(c=>c.n.toLowerCase()).join(", ")}.`);
  return{zone,alt,placeName,month,monthSrc,windowDays,ha:haP?haP.ha:null,haTxt:haP?haP.txt:null,last,want,purpose:parsePurpose($("#f-tipo").value),goalKg:parseKg($("#f-cantidad").value),
-  slope:terr.slope,soil:terr.soil,poorDrain:terr.poorDrain,riego:terr.riego,enso:$("#f-enso").value,notes};}
+  slope:terr.slope,soil:terr.soil,poorDrain:terr.poorDrain,riego:terr.riego,enso:$("#f-enso").value,prior:$("#f-prior").value,notes};}
 
 let CTX=null,RESULTS=[],SEL=null,LIST=[];
+/* Clima para las sugerencias: promedio mensual de los datos diarios de NASA POWER (18 meses) + proyección de los próximos 2 meses.
+   Si no hay datos medidos, usa la referencia por zona. */
+async function suggestClimate(ctx){
+ const ref=buildClimate(ctx.zone,ctx.alt,ctx.enso).map(m=>({...m,src:"ref"}));
+ let D=null;try{D=await getDaily(ctx.zone,ctx.alt);}catch(e){}
+ const real=D&&(D.src==="live"||D.embN>0);if(!real)return{clim:ref,src:"ref"};
+ const acc={};D.rows.forEach(r=>{if(D.src!=="live"&&!r.emb)return;const k=r.d.getFullYear()+"-"+r.d.getMonth();const a=acc[k]||(acc[k]={m:r.d.getMonth(),y:r.d.getFullYear(),n:0,r:0,t:0,tmin:0,tmax:0,h:0});
+  a.n++;a.r+=r.lluvia||0;a.t+=r.temp;a.tmin+=r.tmin;a.tmax+=r.tmax;a.h+=r.hum;});
+ const byM=Array.from({length:12},()=>[]);Object.values(acc).forEach(a=>{if(a.n<20)return;byM[a.m].push({r:a.r/a.n*DIAS[a.m],t:a.t/a.n,tmin:a.tmin/a.n,tmax:a.tmax/a.n,h:a.h/a.n,y:a.y});});
+ const z=ZONAS[ctx.zone];const ys=new Set();
+ const clim=ref.map((rf,m)=>{const L=byM[m];if(!L.length)return rf;L.forEach(x=>ys.add(x.y));const av=k=>L.reduce((s,x)=>s+x[k],0)/L.length;
+  let r=av("r"),t=av("t"),tmin=av("tmin"),tmax=av("tmax"),h=av("h");
+  if(ctx.enso==="nino"){r*=z.pac?(m>=4&&m<=10?.75:.9):1.15;t+=.5;tmin+=.5;tmax+=.5;}
+  if(ctx.enso==="nina"){r*=z.pac?(m>=4&&m<=10?1.2:1.05):.85;t-=.3;tmin-=.3;tmax-=.3;}
+  return{t,tmin,tmax,r,h,src:"nasa",n:L.length};});
+ try{const F=await getForecast(ctx.zone,ctx.alt,ctx.enso,D);const today=F.today;const pm={};
+  F.rows.filter(r=>r.d>today).forEach(r=>{const m=r.d.getMonth();const a=pm[m]||(pm[m]={n:0,r:0,t:0,tmin:0,tmax:0,h:0});a.n++;a.r+=r.lluvia;a.t+=r.temp;a.tmin+=r.tmin;a.tmax+=r.tmax;a.h+=r.hum;});
+  Object.entries(pm).forEach(([m,a])=>{if(a.n<20)return;m=+m;clim[m]={t:a.t/a.n,tmin:a.tmin/a.n,tmax:a.tmax/a.n,r:a.r/a.n*DIAS[m],h:a.h/a.n,src:"proy"};});}catch(e){}
+ return{clim,src:"nasa",years:[...ys].sort()};
+}
 async function run(){
  const ctx=readCtx();await tryPower(ctx.zone);
- ctx.clim=buildClimate(ctx.zone,ctx.alt,ctx.enso);CTX=ctx;
+ const SC=await suggestClimate(ctx);ctx.clim=SC.clim;ctx.climSrc=SC.src;ctx.climYears=SC.years;CTX=ctx;
  RESULTS=CULTIVOS.filter(c=>!c.cover).map(c=>evaluate(c,ctx)).sort((a,b)=>b.score-a.score);
  const top=RESULTS.slice(0,6);const pinned=ctx.want?(ctx.want.cover?evaluate(ctx.want,ctx):RESULTS.find(r=>r.crop.id===ctx.want.id)):null;
  LIST=pinned?[pinned,...top.filter(r=>r.crop.id!==pinned.crop.id)].slice(0,6):top;SEL=LIST[0];
@@ -983,7 +1175,13 @@ function renderSummary(){const c=CTX,z=ZONAS[c.zone],m=c.clim[c.month],mc=c.clim
   <div class="chips">${chips.join("")}</div></div>
   <div class="panel"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline"><h3>Lluvia y temperatura del año</h3><span class="muted" style="font-size:14px" id="chartCrop"></span></div>
   <div class="chart-wrap" id="chart"></div><div class="legend"><span><i class="sw" style="background:var(--sky)"></i>Lluvia (mm)</span><span><i class="sw" style="background:var(--maize)"></i>Temperatura (°C)</span><span><i class="sw" style="background:var(--leaf-soft);border:1px solid var(--leaf)"></i>Meses del cultivo</span></div></div>`;
- drawMainChart();}
+ drawMainChart();renderClimUsed();}
+function renderClimUsed(){const c=CTX;const sel=SEL?SEL.idx:[];
+ const srcTxt={nasa:"NASA POWER (medido)",proy:"Proyección",ref:"Referencia de la zona"};
+ const head=c.climSrc==="nasa"?`Temperatura, humedad y lluvia promedio de los datos diarios medidos por NASA POWER (${(c.climYears||[]).join(" y ")}), más la proyección de los próximos 2 meses.`:"Esta zona aún no tiene datos medidos cargados: se usan valores de referencia. Al publicar la app con su servidor, se cargan los datos de NASA POWER.";
+ $("#climUsed").innerHTML=`<div class="item-head"><div><h3>Clima usado para estas sugerencias</h3><p class="muted" style="font-size:14.5px">${head}</p></div><span class="pill ${c.climSrc==="nasa"?"ok":"mid"}">${c.climSrc==="nasa"?"Datos NASA POWER":"Referencia"}</span></div>
+ <div class="scroll"><table><thead><tr><th>Mes</th><th class="n">Temperatura</th><th class="n">Mín – máx</th><th class="n">Humedad</th><th class="n">Lluvia</th><th>Fuente</th></tr></thead><tbody>${c.clim.map((m,i)=>`<tr${sel.includes(i)?' style="background:var(--leaf-soft)"':""}><td>${cap(MES[i])}${i===c.month?" <b>· siembra</b>":""}</td><td class="n">${m.t.toFixed(1)} °C</td><td class="n">${m.tmin.toFixed(0)} – ${m.tmax.toFixed(0)} °C</td><td class="n">${Math.round(m.h)} %</td><td class="n">${Math.round(m.r)} mm</td><td>${srcTxt[m.src]||"Referencia"}</td></tr>`).join("")}</tbody></table></div>
+ <p class="note">Sombreado: meses del ciclo de ${SEL?esc(SEL.crop.n.toLowerCase()):"el cultivo"}. La humedad alta también se usa para calcular el riesgo de hongos.</p>`;}
 function drawMainChart(){const mc=CTX.clim,W=720,H=250,L=44,Rm=44,T=16,B=34,cw=(W-L-Rm)/12;
  const rMax=Math.max(100,Math.ceil(Math.max(...mc.map(m=>m.r))/100)*100);const tLo=Math.floor(Math.min(...mc.map(m=>m.t))-2),tHi=Math.ceil(Math.max(...mc.map(m=>m.t))+2);
  const yR=v=>T+(H-T-B)*(1-v/rMax),yT=v=>T+(H-T-B)*(1-(v-tLo)/(tHi-tLo));const sel=SEL?SEL.idx:[];
@@ -997,7 +1195,7 @@ function drawMainChart(){const mc=CTX.clim,W=720,H=250,L=44,Rm=44,T=16,B=34,cw=(
 function renderCards(pinned){const c=CTX;
  $("#cardsLead").textContent=`Ordenados de mejor a menos conveniente para sembrar en ${MES[c.month]}${c.ha?` en ${c.haTxt}`:" (cálculos por 1 hectárea; indique su terreno para ajustarlos)"}.`;
  $("#cards").innerHTML=LIST.map((ev,i)=>card(ev,pinned&&ev===pinned,RESULTS.indexOf(ev)+1,i)).join("");
- $$("#cards [data-sel]").forEach(b=>b.addEventListener("click",()=>{SEL=LIST[+b.dataset.sel];drawMainChart();$$("#cards .card").forEach((el,j)=>el.classList.toggle("sel",j===+b.dataset.sel));$("#chart").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});}));
+ $$("#cards [data-sel]").forEach(b=>b.addEventListener("click",()=>{SEL=LIST[+b.dataset.sel];drawMainChart();renderClimUsed();$$("#cards .card").forEach((el,j)=>el.classList.toggle("sel",j===+b.dataset.sel));$("#chart").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});}));
  $$("#cards [data-say]").forEach(b=>b.addEventListener("click",()=>{const ev=LIST[+b.dataset.say];const r=ev.risks[0];
   speakText(`${ev.crop.n}. Puntaje ${ev.score} de 100. Riesgo ${ev.level.toLowerCase()}. ${ev.why.slice(0,2).join(". ")}. ${r?"Cuidado con: "+r.n+". ":""}Ganancia estimada ${Math.round(ev.marginHa*ev.ha).toLocaleString("es-CR")} colones.`);}));
  $$("#cards [data-plan]").forEach(b=>b.addEventListener("click",()=>{const ev=LIST[+b.dataset.plan];openPlanFor(ev.crop.id);}));
@@ -1005,7 +1203,7 @@ function renderCards(pinned){const c=CTX;
 function card(ev,isPinned,rank,i){const c=CTX,cr=ev.crop,ha=ev.ha;const harvestKg=ev.yHa*1000*ha;const seeds=cr.seed.q*ha;
  const seedTxt=`${seeds>=100?Math.round(seeds).toLocaleString("es-CR"):seeds.toLocaleString("es-CR",{maximumFractionDigits:1})} ${cr.seed.u}`;
  const qq=["frijol","maiz","arroz"].includes(cr.id)?` (≈${Math.round(harvestKg/46).toLocaleString("es-CR")} qq)`:"";
- const nexts=nextCrops(ev,c);const comps=cr.comp.map(x=>{const o=cropById(x.id);return`<li><b>${o.n}</b>: ${x.w}</li>`;}).join("");
+ const longC=cr.per||cr.d>365;const nexts=longC?[]:nextCrops(ev,c);const comps=cr.comp.map(x=>{const o=cropById(x.id);return`<li><b>${o.n}</b>: ${x.w}</li>`;}).join("");
  const cost=ev.costHa;const rows=[["Semilla o plántulas",cost.sem],["Fertilizantes (nutrientes)",cost.fert],["Plaguicidas y fungicidas",cost.plag],["Herbicidas",cost.herb],["Mano de obra",cost.mo]];if(cost.riego)rows.push(["Riego (agua faltante)",cost.riego]);
  const margin=ev.marginHa*ha;
  const goal=ev.goal?`<p style="font-size:15px">${ev.goal.ok===null?"":ev.goal.ok?'<b class="pos">Su terreno alcanza</b> para la meta.':'<b class="neg">Su terreno no alcanza</b> para la meta.'} Para ${kgFmt(c.goalKg)} necesitaría ≈ ${ev.goal.haNeed.toFixed(2)} ha.</p>`:"";
@@ -1013,15 +1211,17 @@ function card(ev,isPinned,rank,i){const c=CTX,cr=ev.crop,ha=ev.ha;const harvestK
  const allRisks=[...ev.risks,...ev.pests.filter(p=>p.s!=="Baja").map(p=>({n:p.n,s:p.s,tip:`Aparece con ${p.when}. ${p.tip}.`}))];
  return`<article class="card ${isPinned?"pinned":""}"><div class="c-head"><div class="c-ic" aria-hidden="true">${cr.ic}</div><div class="c-title"><span class="c-rank">${isPinned?"El producto que usted escogió · ":""}${rank>0?"Puesto "+rank:"Abono verde"}</span><h3>${cr.n}</h3><span><span class="pill ${ev.level}">Riesgo ${ev.level.toLowerCase()}</span></span></div><div class="score"><b>${ev.score}</b><span>de 100</span></div></div>
  <div class="bar" aria-hidden="true"><i style="width:${ev.score}%"></i></div>
- <div class="kv"><div><span>Cosecha estimada</span><b>${kgFmt(harvestKg)}${qq}</b></div><div><span>Semilla necesaria</span><b>${seedTxt}</b></div><div><span>Ciclo</span><b>${cr.d} días · cosecha en ${MES[ev.idx[ev.idx.length-1]]}</b></div><div><span>Ganancia estimada</span><b class="${margin>=0?"pos":"neg"}">${crc(margin)}</b></div></div>
+ <div class="kv"><div><span>${cr.per?"Cosecha por año":"Cosecha estimada"}</span><b>${kgFmt(harvestKg)}${qq}</b></div><div><span>Semilla necesaria</span><b>${seedTxt}</b></div><div><span>Ciclo</span><b>${cr.d>365?`Permanente · 1.ª cosecha ≈ año ${Math.ceil(cr.d/365)}`:cr.per?`Permanente · 1.ª cosecha a los ${cr.d} días`:`${cr.d} días · cosecha en ${MES[ev.idx[ev.idx.length-1]]}`}</b></div><div><span>${cr.per?"Ganancia por año en producción":"Ganancia estimada"}</span><b class="${margin>=0?"pos":"neg"}">${crc(margin)}</b></div></div>
+ <div class="chips"><span class="pill ${cr.quim===1?"ok":cr.quim===2?"mid":"bad"}">Uso de químicos ${QUIM_TXT[cr.quim]}</span>${cr.est?`<span class="chip">Inversión inicial ≈ ${crc(cr.est*ha)}</span>`:""}${cr.shade?'<span class="chip">Crece bajo sombra</span>':""}</div>
  <ul class="why">${why.map(w=>`<li>${w}</li>`).join("")}</ul>${goal}
  <details><summary>Riesgos, costos, asocio y rotación</summary><div class="det">
   <div><h4>Riesgos por clima y plagas</h4>${allRisks.length?`<ul class="risk-list">${allRisks.slice(0,6).map(r=>`<li><span class="sev ${r.s}">${r.s}</span><span><b>${r.n}.</b> ${r.tip}</span></li>`).join("")}</ul>`:'<p class="muted">Sin riesgos importantes con los datos indicados.</p>'}</div>
-  <div><h4>Costos del ciclo (${ha!==1?ha.toFixed(2):"1"} ha)</h4><table><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${crc(r[1]*ha)}</td></tr>`).join("")}<tr class="tot"><td>Costo total</td><td class="n">${crc(ev.costTotHa*ha)}</td></tr><tr><td>Venta estimada (${crc(cr.p)}/kg)</td><td class="n">${crc(ev.incomeHa*ha)}</td></tr><tr><td><b>Ganancia estimada</b></td><td class="n ${margin>=0?"pos":"neg"}"><b>${crc(margin)}</b></td></tr></tbody></table>
+  <div><h4>${cr.per?"Costos por año en producción":"Costos del ciclo"} (${ha!==1?ha.toFixed(2):"1"} ha)</h4>${cr.est?`<p class="note">Además, la inversión inicial (plantas, siembra${PLAN[cr.id]&&PLAN[cr.id].tutor!=null?", espaldera o tutores":""}) es de ≈ ${crc(cr.est*ha)}, una sola vez.</p>`:""}<table><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${crc(r[1]*ha)}</td></tr>`).join("")}<tr class="tot"><td>Costo total</td><td class="n">${crc(ev.costTotHa*ha)}</td></tr><tr><td>Venta estimada (${crc(cr.p)}/kg)</td><td class="n">${crc(ev.incomeHa*ha)}</td></tr><tr><td><b>Ganancia estimada</b></td><td class="n ${margin>=0?"pos":"neg"}"><b>${crc(margin)}</b></td></tr></tbody></table>
   <p class="note" style="margin-top:6px">${cr.seed.x}. Rendimiento esperado ${ev.yHa.toLocaleString("es-CR",{maximumFractionDigits:1})} t/ha según el clima.</p></div>
   ${comps?`<div><h4>Puede sembrarlo junto con</h4><ul class="why">${comps}</ul></div>`:""}
-  <div><h4>Qué sembrar después</h4><ul class="why">${nexts.map(nx=>`<li><b>${nx.crop.n}</b> en ${MES[nx.idx[0]]} (puntaje ${nx.score}): ${FAM[nx.crop.fam].toLowerCase()} después de ${FAM[cr.fam].toLowerCase()}.</li>`).join("")}</ul></div>
+  <div><h4>Qué sembrar después</h4>${longC?'<p class="muted">Cultivo permanente: no se rota. Diversifique con árboles de sombra y cultivos asociados en las calles.</p>':""}<ul class="why">${nexts.map(nx=>`<li><b>${nx.crop.n}</b> en ${MES[nx.idx[0]]} (puntaje ${nx.score}): ${FAM[nx.crop.fam].toLowerCase()} después de ${FAM[cr.fam].toLowerCase()}.</li>`).join("")}</ul></div>
  </div></details>
+ <details><summary>Árboles para sembrar cerca (sombra y control de plagas)</summary><div class="det">${treeHTML(cr,c,ha)}</div></details>
  <div class="c-actions"><button class="link" type="button" data-plan="${i}">Ver línea de tiempo</button><button class="link" type="button" data-sel="${i}">Ver meses en el gráfico</button><button class="link" type="button" data-say="${i}">Escuchar</button></div></article>`;}
 function renderStrategies(){const c=CTX;const base=c.last||c.want||RESULTS[0].crop;const evBase=evaluate(base,c);
  const best=RESULTS.find(r=>(!c.last||r.crop.fam!==c.last.fam)&&r.crop.id!==base.id)||RESULTS[0];
@@ -1039,8 +1239,8 @@ function renderStrategies(){const c=CTX;const base=c.last||c.want||RESULTS[0].cr
 
 /* Guardar consulta */
 function saveQuery(){if(!CTX){toast("Primero vea las sugerencias.");return;}
- const form={};FIELDS.forEach(f=>form[f.id]=$("#"+f.id).value);form["f-enso"]=$("#f-enso").value;
- const top=LIST.map(ev=>({id:ev.crop.id,n:ev.crop.n,ic:ev.crop.ic,score:ev.score,level:ev.level,cosechaKg:Math.round(ev.yHa*1000*ev.ha),costo:Math.round(ev.costTotHa*ev.ha),ganancia:Math.round(ev.marginHa*ev.ha),why:ev.why.slice(0,3),riesgos:[...ev.risks.map(r=>r.n),...ev.pests.filter(p=>p.s==="Alta").map(p=>p.n)].slice(0,3)}));
+ const form={};FIELDS.forEach(f=>form[f.id]=$("#"+f.id).value);form["f-enso"]=$("#f-enso").value;form["f-prior"]=$("#f-prior").value;
+ const top=LIST.map(ev=>({id:ev.crop.id,n:ev.crop.n,ic:ev.crop.ic,quim:ev.crop.quim,score:ev.score,level:ev.level,cosechaKg:Math.round(ev.yHa*1000*ev.ha),costo:Math.round(ev.costTotHa*ev.ha),ganancia:Math.round(ev.marginHa*ev.ha),why:ev.why.slice(0,3),riesgos:[...ev.risks.map(r=>r.n),...ev.pests.filter(p=>p.s==="Alta").map(p=>p.n)].slice(0,3)}));
  const m=CTX.clim[CTX.month];
  Store.put(uid("consulta"),{kind:"consulta",fecha:iso(new Date()),form,lugar:CTX.placeName||ZONAS[CTX.zone].n,zona:ZONAS[CTX.zone].n,mes:MES[CTX.month],ha:CTX.haTxt||"1 ha (por defecto)",
   clima:{t:+m.t.toFixed(1),r:Math.round(m.r),h:Math.round(m.h)},top,precision:precision().got});
@@ -1049,10 +1249,10 @@ function saveQuery(){if(!CTX){toast("Primero vea las sugerencias.");return;}
 /* ===================== 2 · CALENDARIO ===================== */
 let PLAN_CUR=null;
 function buildPlan(crop,start,ha,ctx){
- const P=PLAN[crop.id];const st=ETAPAS[P.tipo];const totalW=Math.ceil(crop.d/7);const pre=P.alm?-5:-2;
- const bounds=[];let acc=0;st.forEach(([name,f])=>{bounds.push({name,from:acc*crop.d,to:(acc+f)*crop.d});acc+=f;});
+ const P=PLAN[crop.id];const D=Math.min(crop.d,365);const st=ETAPAS[crop.d>365?"perenne":P.tipo];const totalW=Math.ceil(D/7);const pre=P.alm?-5:-2;
+ const bounds=[];let acc=0;st.forEach(([name,f])=>{bounds.push({name,from:acc*D,to:(acc+f)*D});acc+=f;});
  const stageAt=day=>{for(const b of bounds)if(day<b.to)return b.name;return bounds[bounds.length-1].name;};
- const harvestStart=P.cos?Math.max(1,Math.floor((crop.d-P.cos*7)/7)):totalW+1;const harvestDay=P.cos?harvestStart*7:crop.d;
+ const harvestStart=(P.cos&&crop.d<=365)?Math.max(1,Math.floor((crop.d-P.cos*7)/7)):totalW+1;const harvestDay=(P.cos&&crop.d<=365)?harvestStart*7:crop.d;
  const seeds=crop.seed.q*ha;const seedTxt=`${seeds>=100?Math.round(seeds).toLocaleString("es-CR"):seeds.toLocaleString("es-CR",{maximumFractionDigits:1})} ${crop.seed.u}`;
  const weeks=[];let fertN=0;
  for(let w=pre;w<=totalW;w++){
@@ -1066,12 +1266,12 @@ function buildPlan(crop,start,ha,ctx){
   (P.aporque||[]).forEach(d=>{if(d>=dFrom&&d<=dTo)t.push("Aporcar: arrimar tierra a la base de las plantas");});
   if(P.tutor&&P.tutor>=dFrom&&P.tutor<=dTo)t.push("Colocar tutores o espalderas y amarrar las plantas");
   if(w===1||w===2)t.push(P.alm?"Revisar arraigo y reponer plantas muertas":"Revisar germinación y resembrar donde faltan plantas");
-  if(w>=2&&w<harvestStart&&w%2===0&&dFrom<crop.d*.6)t.push("Control de malezas (deshierba manual o con cobertura)");
+  if(w>=2&&w<harvestStart&&w%2===0&&dFrom<D*.6)t.push("Control de malezas (deshierba manual o con cobertura)");
   if(w>=1&&!harvest)t.push("Recorrido de vigilancia: revise 10 plantas en zigzag por el lote");
   if(w===harvestStart-1)t.push("Suspender aplicaciones según el período de carencia de la etiqueta; conseguir sacos o cajas y comprador");
   if(harvest){t.push(w===harvestStart?"Inicio de cosecha":(P.cos>2?"Cosechar lo que esté listo":"Terminar la cosecha"));if(crop.dryH)t.push("Cosechar en días secos y secar bien el grano antes de guardar");}
   if(w===totalW&&P.tipo==="abono")t.push("Cortar e incorporar la canavalia al suelo en floración");
-  if(w===totalW)t.push("Después de cosechar: dejar el rastrojo como cobertura y planear la rotación");
+  if(w===totalW)t.push(crop.d>365?`Fin del primer año. La primera cosecha llega en ≈ ${Math.ceil(crop.d/365)} años: siga con fertilización, poda y control de malezas.`:crop.per?"El cultivo sigue produciendo: mantenga fertilización, poda y limpieza":"Después de cosechar: dejar el rastrojo como cobertura y planear la rotación");
   if(w<0&&!t.length)continue;
   const stage=w<0?"Preparación":(harvest?"Cosecha":stageAt(Math.max(0,dFrom)));
   const info=STAGE_INFO[stage]||STAGE_INFO["Crecimiento"];
@@ -1088,27 +1288,27 @@ function buildPlan(crop,start,ha,ctx){
   const att=w<0?"Bajo":sc<=2?"Bajo":sc<=4.5?"Medio":"Alto";
   weeks.push({w,ds,de,mo,fz,stage,info,harvest,tasks:t,cr,pl,att,dFrom:Math.max(0,dFrom),dTo,toHarvest:harvestDay-Math.max(0,dFrom)});
  }
- return{crop,start,ha,weeks,bounds,harvestStart,harvestDay,totalW,pre};
+ return{crop,start,ha,weeks,bounds,harvestStart,harvestDay,totalW,pre,D};
 }
 function calCtx(){return CTX||{clim:buildClimate("VC",1150,"normal"),slope:null,poorDrain:false,riego:null};}
 let TL_ALL=false;
 function renderPlan(plan,sid){
  PLAN_CUR={plan,sid};const s=sid?Store.get(sid):null;const checks=(s&&s.checks)||{};
  const today=new Date();today.setHours(0,0,0,0);const dayNow=Math.floor((today-plan.start)/864e5);const curW=Math.floor(dayNow/7);
- const hs=addDays(plan.start,plan.harvestDay);const end=addDays(plan.start,plan.crop.d);const inHarvest=PLAN[plan.crop.id].cos&&dayNow>=plan.harvestDay&&dayNow<=plan.crop.d;
- let status;if(dayNow<0)status=`Faltan ${-dayNow} días para sembrar`;else if(dayNow>plan.crop.d)status="Ciclo terminado";else if(inHarvest)status="¡En etapa de cosecha!";else status=`Semana ${curW} · ${plan.weeks.find(w=>w.w===curW)?.stage||""}`;
+ const hs=addDays(plan.start,plan.harvestDay);const end=addDays(plan.start,plan.D);const inHarvest=PLAN[plan.crop.id].cos&&dayNow>=plan.harvestDay&&dayNow<=plan.D;
+ let status;if(dayNow<0)status=`Faltan ${-dayNow} días para sembrar`;else if(dayNow>plan.D)status="Ciclo terminado";else if(inHarvest)status="¡En etapa de cosecha!";else status=`Semana ${curW} · ${plan.weeks.find(w=>w.w===curW)?.stage||""}`;
  const lo=Math.round(plan.harvestDay*.9),hi=Math.round(plan.harvestDay*1.1);
  const bar=plan.bounds.map((b,i)=>`<div style="flex:${b.to-b.from};background:${ETAPA_COL[i%ETAPA_COL.length]}" title="${b.name}">${b.name}</div>`).join("");
- const pct=clamp(dayNow/plan.crop.d,0,1)*100;
+ const pct=clamp(dayNow/plan.D,0,1)*100;
  const yHa=evaluate(plan.crop,{...calCtx(),month:plan.start.getMonth(),ha:plan.ha,last:null,windowDays:null,goalKg:null,purpose:null,alt:CTX?CTX.alt:1150}).yHa;
  const started=dayNow>=0&&plan.weeks.some(w=>w.w<curW);const vis=plan.weeks.filter(w=>TL_ALL||!started||w.w>=curW);
  const cnt={Alto:0,Medio:0,Bajo:0};plan.weeks.forEach(w=>cnt[w.att]++);
  $("#calOut").innerHTML=`<div class="panel">
-  <div class="item-head"><div><div class="eyebrow">${esc(plan.crop.n)} · ${plan.ha.toFixed(2)} ha</div><h2>${status}</h2></div><span class="pill ${inHarvest?"mid":"info"}">${inHarvest?"Cosecha":dayNow<0?"Por sembrar":dayNow>plan.crop.d?"Terminado":"En curso"}</span></div>
-  <div class="facts four"><div class="fact"><b>${PLAN[plan.crop.id].cos?plan.harvestDay+" días":"—"}</b><span>Tarda en llegar a cosecha (normal ${lo}–${hi} días, según clima y variedad)</span></div>
-  <div class="fact"><b>${fdShort(plan.start)}</b><span>Siembra</span></div><div class="fact"><b>${fdShort(hs)}</b><span>Empieza la cosecha</span></div><div class="fact"><b>${fdShort(end)}</b><span>Fin del ciclo (${plan.crop.d} días)</span></div>
-  <div class="fact"><b>${kgFmt(yHa*1000*plan.ha)}</b><span>Cosecha estimada</span></div><div class="fact"><b>${cnt.Alto} / ${cnt.Medio} / ${cnt.Bajo}</b><span>Semanas de atención alta / media / baja</span></div></div>
-  <div class="stagebar" aria-label="Etapas fenológicas">${bar}${dayNow>=0&&dayNow<=plan.crop.d?`<span class="today" style="left:calc(${pct}% - 1px)" title="Hoy"></span>`:""}</div>
+  <div class="item-head"><div><div class="eyebrow">${esc(plan.crop.n)} · ${plan.ha.toFixed(2)} ha</div><h2>${status}</h2></div><span class="pill ${inHarvest?"mid":"info"}">${inHarvest?"Cosecha":dayNow<0?"Por sembrar":dayNow>plan.D?"Terminado":"En curso"}</span></div>
+  <div class="facts four"><div class="fact"><b>${plan.crop.d>365?`≈ ${nf(plan.harvestDay/365,1)} años`:(PLAN[plan.crop.id].cos||plan.crop.per)?plan.harvestDay+" días":"—"}</b><span>Tarda en llegar a la primera cosecha (normal ${plan.crop.d>365?`${nf(lo/365,1)}–${nf(hi/365,1)} años`:`${lo}–${hi} días`}, según clima y variedad)</span></div>
+  <div class="fact"><b>${fdate(plan.start)}</b><span>Siembra</span></div><div class="fact"><b>${fdate(hs)}</b><span>Empieza la cosecha</span></div><div class="fact"><b>${fdate(end)}</b><span>${plan.crop.d>365?"Fin del primer año":`Fin del ciclo (${plan.D} días)`}</span></div>
+  <div class="fact"><b>${kgFmt(yHa*1000*plan.ha)}</b><span>${plan.crop.per?"Cosecha por año en producción":"Cosecha estimada"}</span></div><div class="fact"><b>${cnt.Alto} / ${cnt.Medio} / ${cnt.Bajo}</b><span>Semanas de atención alta / media / baja</span></div></div>
+  <div class="stagebar" aria-label="Etapas fenológicas">${bar}${dayNow>=0&&dayNow<=plan.D?`<span class="today" style="left:calc(${pct}% - 1px)" title="Hoy"></span>`:""}</div>
   <p class="note">Riesgos según el clima promedio de ${CTX?esc(ZONAS[CTX.zone].n):"Valle Central"} (cámbielo en Sugerencias). Los productos sugeridos son biológicos o de bajo impacto ambiental, con cantidades calculadas para ${nf(plan.ha,2)} ha y ${VOL[PLAN[plan.crop.id].tipo]} L de agua por hectárea. Las cantidades de fertilizante son un programa orientativo: ajústelas con un análisis de suelo (INTA o UCR). Las dosis de productos son orientativas: use siempre la dosis de la etiqueta del producto que compre (cambia según la marca y la concentración), solo productos registrados ante el SFE, con equipo de protección, y confirme con el técnico del MAG. Aplique solo si en el recorrido encuentra la plaga.</p>
   <div class="actions"><button class="btn small ghost" id="calSay" type="button">Escuchar esta semana</button>${started?`<button class="btn small ghost" id="tlAll" type="button">${TL_ALL?"Ocultar semanas pasadas":"Ver semanas pasadas"}</button>`:""}${sid?`<a class="btn small ghost" href="#costos" data-open-s="${sid}">Ver costos de esta siembra</a>`:""}</div></div>
   <div class="weeks">${vis.map(wk=>`<div class="week att-${wk.att} ${wk.w===curW?"now":""} ${wk.harvest?"harvest":""}" id="wk${wk.w}">
@@ -1196,7 +1396,7 @@ function renderSaved(){const q=Store.all("consulta");
  ${x.top&&x.top[0]?`<p style="font-size:15px"><b>Mejor opción: ${esc(x.top[0].n)}.</b> ${esc((x.top[0].why||[]).join(". "))}${x.top[0].riesgos&&x.top[0].riesgos.length?`. Cuidado con: ${esc(x.top[0].riesgos.join(", ").toLowerCase())}.`:""}</p>`:""}
  <div class="c-actions"><button class="link" type="button" data-open="${x.id}">Abrir en Sugerencias</button><button class="link" type="button" data-qsay="${x.id}">Escuchar</button>${delBtn(x.id)}</div></div>`).join("")
  :`<div class="empty"><b>No tiene consultas guardadas</b><span>En “Sugerencias”, llene los datos de su finca y toque “Guardar esta consulta”.</span><a class="btn small" href="#sugerencias">Ir a Sugerencias</a></div>`;
- $$("#savedList [data-open]").forEach(b=>b.addEventListener("click",()=>{const x=Store.get(b.dataset.open);if(!x)return;FIELDS.forEach(f=>$("#"+f.id).value=x.form[f.id]||"");$("#f-enso").value=x.form["f-enso"]||"normal";$("#exampleFlag").hidden=true;updateMeter();run();location.hash="#sugerencias";}));
+ $$("#savedList [data-open]").forEach(b=>b.addEventListener("click",()=>{const x=Store.get(b.dataset.open);if(!x)return;FIELDS.forEach(f=>$("#"+f.id).value=x.form[f.id]||"");$("#f-enso").value=x.form["f-enso"]||"normal";$("#f-prior").value=x.form["f-prior"]||"equilibrio";$("#exampleFlag").hidden=true;updateMeter();run();location.hash="#sugerencias";}));
  $$("#savedList [data-qsay]").forEach(b=>b.addEventListener("click",()=>{const x=Store.get(b.dataset.qsay);if(!x||!x.top)return;const t=x.top[0];speakText(`Consulta de ${x.lugar}, siembra en ${x.mes}. La mejor opción es ${t.n}, con puntaje ${t.score} y riesgo ${t.level.toLowerCase()}. ${(t.why||[]).join(". ")}.`);}));
  wireDel("#savedList");}
 
@@ -1506,8 +1706,8 @@ function refreshAll(){const h=(location.hash||"").slice(1);
 /* ===================== ARRANQUE ===================== */
 const EXAMPLE={"f-lugar":"Pérez Zeledón","f-mes":"mayo","f-ha":"2 manzanas","f-terreno":"ondulado, franco, sin riego","f-ultimo":"maíz","f-producto":"frijol","f-tipo":"venta","f-cantidad":"","f-inicio":"","f-fin":""};
 function fill(o){for(const[k,v]of Object.entries(o))$("#"+k).value=v;$("#f-enso").value="normal";updateMeter();}
-function saveDraft(){try{const o={};FIELDS.forEach(f=>o[f.id]=$("#"+f.id).value);o.enso=$("#f-enso").value;localStorage.setItem("siembra-clara",JSON.stringify(o));}catch(e){}}
-function loadDraft(){try{const o=JSON.parse(localStorage.getItem("siembra-clara")||"null");if(o&&FIELDS.some(f=>o[f.id])){FIELDS.forEach(f=>$("#"+f.id).value=o[f.id]||"");$("#f-enso").value=o.enso||"normal";return true;}}catch(e){}return false;}
+function saveDraft(){try{const o={};FIELDS.forEach(f=>o[f.id]=$("#"+f.id).value);o.enso=$("#f-enso").value;o.prior=$("#f-prior").value;localStorage.setItem("siembra-clara",JSON.stringify(o));}catch(e){}}
+function loadDraft(){try{const o=JSON.parse(localStorage.getItem("siembra-clara")||"null");if(o&&FIELDS.some(f=>o[f.id])){FIELDS.forEach(f=>$("#"+f.id).value=o[f.id]||"");$("#f-enso").value=o.enso||"normal";$("#f-prior").value=o.prior||"equilibrio";return true;}}catch(e){}return false;}
 
 $("#dl-lugar").innerHTML=LUGARES.map(p=>`<option>${p[0]}</option>`).join("");
 $("#dl-cultivo").innerHTML=CULTIVOS.map(c=>`<option>${c.n}</option>`).join("");
@@ -1516,7 +1716,7 @@ $("#c-cultivo").innerHTML=cropOpts;$("#s-cultivo").innerHTML=cropOpts;$("#h-cult
 $("#c-inicio").value=iso(new Date());$("#s-inicio").value=iso(new Date());
 FIELDS.forEach(f=>$("#"+f.id).addEventListener("input",()=>{updateMeter();$("#exampleFlag").hidden=true;}));
 $("#form").addEventListener("submit",e=>{e.preventDefault();saveDraft();run();});
-$("#f-enso").addEventListener("change",()=>{saveDraft();run();});
+$("#f-enso").addEventListener("change",()=>{saveDraft();run();});$("#f-prior").addEventListener("change",()=>{saveDraft();run();});
 $("#btnSave").addEventListener("click",saveQuery);
 $("#btnClear").addEventListener("click",()=>{FIELDS.forEach(f=>$("#"+f.id).value="");$("#f-enso").value="normal";$("#exampleFlag").hidden=true;updateMeter();saveDraft();run();});
 $("#btnExample").addEventListener("click",()=>{fill(EXAMPLE);$("#exampleFlag").hidden=false;run();});
