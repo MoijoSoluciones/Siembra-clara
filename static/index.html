@@ -10,27 +10,18 @@
 <style>
 /* Layout: barra de secciones fija arriba; una vista a la vez; cada vista en una columna que se apila en teléfono */
 :root{
-  --bg:#F2F5EE; --surface:#FFFFFF; --ink:#16241B; --muted:#56685C; --line:#D6DFD3;
-  --leaf:#1D6A46; --leaf-ink:#FFFFFF; --leaf-soft:#E1EEE5;
-  --maize:#A86F0C; --maize-soft:#F6EBD2;
-  --sky:#2F6F95; --sky-soft:#DCEAF2;
-  --ok:#1C7A44; --ok-soft:#DDF0E3; --warn:#9A5B00; --warn-soft:#FBEBCF; --bad:#B0281F; --bad-soft:#F8DEDB;
+  /* Paleta clara: fondo blanco, verdes y tonos tierra suaves */
+  --bg:#FFFFFF; --surface:#FFFFFF; --tint:#F6FAF7; --ink:#1F2A24; --muted:#66756B; --line:#E2E8E4;
+  --leaf:#2E7D55; --leaf-ink:#FFFFFF; --leaf-soft:#EAF5EE;
+  --maize:#B7791F; --maize-soft:#FDF4E3;
+  --sky:#3A7FB0; --sky-soft:#EAF3FA;
+  --ok:#2E7D55; --ok-soft:#EAF5EE; --warn:#A8670A; --warn-soft:#FDF1DC; --bad:#C0392B; --bad-soft:#FCEBE8;
   --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
-  --r:12px;
+  --r:14px;
   color-scheme:light;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F1612; --surface:#17211B; --ink:#E6EEE8; --muted:#9BB0A2; --line:#2A3A30;
-  --leaf:#5DC290; --leaf-ink:#0B1A12; --leaf-soft:#1A3326; --maize:#E3B24C; --maize-soft:#3A2E15;
-  --sky:#74B6DC; --sky-soft:#173041; --ok:#62C98F; --ok-soft:#173826; --warn:#F0B54E; --warn-soft:#3B2C12; --bad:#F2877F; --bad-soft:#401C19;
-  color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0F1612; --surface:#17211B; --ink:#E6EEE8; --muted:#9BB0A2; --line:#2A3A30;
-  --leaf:#5DC290; --leaf-ink:#0B1A12; --leaf-soft:#1A3326; --maize:#E3B24C; --maize-soft:#3A2E15;
-  --sky:#74B6DC; --sky-soft:#173041; --ok:#62C98F; --ok-soft:#173826; --warn:#F0B54E; --warn-soft:#3B2C12; --bad:#F2877F; --bad-soft:#401C19;
-  color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5}
@@ -62,8 +53,8 @@ p{margin:0}
 .tab:focus-visible{outline:3px solid var(--maize);outline-offset:1px}
 
 /* Comunes */
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
-.form{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 3px rgba(31,42,36,.05);padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.form{background:var(--tint);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:18px}
 .form-head{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
 .meter{min-width:220px;flex:1;max-width:420px;display:grid;gap:6px}
 .meter-bar{height:12px;background:var(--leaf-soft);border-radius:999px;overflow:hidden}
@@ -73,15 +64,16 @@ p{margin:0}
 .field{display:grid;gap:4px;min-width:0}
 .field label{font-weight:700;font-size:16px}
 .field small{color:var(--muted);font-size:13.5px}
-.field input,.field select,.field textarea{font:inherit;font-size:18px;padding:12px 14px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.field input,.field select,.field textarea{font:inherit;font-size:18px;padding:12px 14px;border-radius:10px;border:2px solid var(--line);background:#FFFFFF;color:var(--ink);width:100%;min-width:0}
 .field textarea{min-height:84px;resize:vertical}
+.field select{height:54px;padding-block:0}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--leaf);box-shadow:0 0 0 3px var(--leaf-soft)}
 .field.filled input,.field.filled select{border-color:var(--leaf)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 button{font:inherit;cursor:pointer}
 .btn{font-weight:700;font-size:17px;padding:12px 20px;border-radius:10px;border:2px solid var(--leaf);background:var(--leaf);color:var(--leaf-ink);display:inline-flex;align-items:center;gap:8px;text-decoration:none}
 .btn.ghost{background:transparent;color:var(--leaf)}
-.btn.warn{background:var(--maize);border-color:var(--maize);color:#fff}
+.btn.warn{background:var(--maize);border-color:var(--maize);color:#FFFFFF}
 .btn.danger{background:transparent;border-color:var(--bad);color:var(--bad)}
 .btn.small{font-size:15px;padding:8px 14px}
 .btn:disabled{opacity:.55;cursor:not-allowed}
@@ -114,12 +106,12 @@ tr.tot td{font-weight:700;border-bottom:2px solid var(--ink)}
 .scroll{overflow-x:auto}
 .pos{color:var(--ok)} .neg{color:var(--bad)}
 .empty{border:2px dashed var(--line);border-radius:var(--r);padding:22px;text-align:center;color:var(--muted);display:grid;gap:10px;justify-items:center}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:10px;font-weight:700;z-index:50;max-width:min(92vw,520px);text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--leaf);color:#FFFFFF;padding:12px 18px;border-radius:10px;font-weight:700;z-index:50;max-width:min(92vw,520px);text-align:center}
 
 /* Tarjetas de cultivo */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
 @media (max-width:420px){.cards{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 3px rgba(31,42,36,.05);padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
 .card.pinned{border:2px solid var(--maize)}
 .card.sel{box-shadow:0 0 0 3px var(--sky-soft)}
 .c-head{display:flex;gap:12px;align-items:flex-start}
@@ -204,7 +196,7 @@ summary{cursor:pointer;font-weight:700;color:var(--leaf);font-size:16px}
 .hbar .t i{display:block;height:100%;background:var(--leaf)}
 .hbar b{font-variant-numeric:tabular-nums;font-size:14px}
 .chart-wrap{position:relative}
-.tip{position:absolute;z-index:5;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:8px;padding:8px 10px;font-size:13.5px;line-height:1.35;min-width:150px;max-width:240px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.tip{position:absolute;z-index:5;pointer-events:none;background:#FFFFFF;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px;line-height:1.35;min-width:150px;max-width:240px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 .tip b{display:block;font-size:14px;margin-bottom:2px}
 .tip span{display:block;opacity:.85}
 .hit{cursor:crosshair}
@@ -228,8 +220,8 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
 <!-- 1 SUGERENCIAS -->
 <section data-view="sugerencias" style="display:grid;gap:24px">
   <div class="section-head">
-    <div class="eyebrow">1 · Qué sembrar</div>
-    <h1>Sugerencias para su finca</h1>
+    <div class="eyebrow">1 · Mi Siembra</div>
+    <h1>Qué le conviene sembrar</h1>
     <p class="muted" style="max-width:62ch">Escriba lo que sepa. Ningún dato es obligatorio: entre más casillas llene, más exacta es la sugerencia.</p>
   </div>
   <form class="form" id="form" autocomplete="off">
@@ -238,26 +230,18 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
       <div class="meter" aria-live="polite"><div class="meter-bar"><div class="meter-fill" id="meterFill"></div></div><div class="meter-txt" id="meterTxt">Precisión: —</div></div>
     </div>
     <div class="fields">
-      <div class="field"><label for="f-lugar">Lugar</label><input id="f-lugar" list="dl-lugar" placeholder="Ej: Pérez Zeledón"><small>Cantón, pueblo o zona</small></div>
+      <div class="field"><label for="f-canton">Cantón</label><select id="f-canton"></select></div>
+      <div class="field"><label for="f-distrito">Distrito</label><select id="f-distrito"></select></div>
+      <div class="field" style="align-content:end"><button type="button" class="btn ghost" id="btnGeo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7.5"/></svg>Usar mi ubicación actual</button><small id="geoMsg"></small></div>
       <div class="field"><label for="f-mes">Mes de siembra</label><input id="f-mes" list="dl-mes" placeholder="Ej: mayo"><small>Si lo deja vacío usamos este mes</small></div>
       <div class="field"><label for="f-ha">Terreno disponible</label><input id="f-ha" placeholder="Ej: 2 hectáreas o 3 manzanas"><small>Hectáreas, manzanas o m²</small></div>
-      <div class="field"><label for="f-terreno">Cómo es el terreno</label><input id="f-terreno" list="dl-terreno" placeholder="Ej: quebrado, arcilloso, sin riego"><small>Plano / ondulado / quebrado · suelo · riego · si se encharca</small></div>
       <div class="field"><label for="f-ultimo">Lo último que sembró</label><input id="f-ultimo" list="dl-cultivo" placeholder="Ej: maíz"><small>Para recomendar la rotación</small></div>
       <div class="field"><label for="f-producto">Producto que quiere sembrar</label><input id="f-producto" list="dl-cultivo" placeholder="Ej: frijol"><small>Lo evaluamos aparte</small></div>
-      <div class="field"><label for="f-tipo">Para qué es la cosecha</label><input id="f-tipo" list="dl-tipo" placeholder="Ej: venta"><small>Venta, consumo de la casa, ganado…</small></div>
-      <div class="field"><label for="f-cantidad">Cuánto quiere cosechar</label><input id="f-cantidad" placeholder="Ej: 40 quintales"><small>kg, quintales o toneladas</small></div>
-      <div class="field"><label for="f-inicio">Fecha de inicio de siembra</label><input id="f-inicio" placeholder="Ej: 15 de mayo"><small>Reemplaza el mes si lo llena</small></div>
-      <div class="field"><label for="f-fin">Fecha límite para cosechar</label><input id="f-fin" placeholder="Ej: fin de agosto"><small>Descarta cultivos que no alcanzan</small></div>
-      <div class="field"><label for="f-prior">Qué es más importante para usted</label>
-        <select id="f-prior"><option value="equilibrio">Equilibrio entre ganancia y ambiente</option><option value="quimicos">Usar menos químicos</option><option value="ganancia">Mayor ganancia</option></select><small>Cambia el orden de las sugerencias</small></div>
-      <div class="field"><label for="f-enso">Pronóstico de la temporada</label>
-        <select id="f-enso"><option value="normal">Año normal (promedio histórico)</option><option value="nino">El Niño (Pacífico más seco)</option><option value="nina">La Niña (Pacífico más lluvioso)</option></select><small>Consulte el aviso vigente del IMN</small></div>
+      <input type="hidden" id="f-prior" value="equilibrio">
     </div>
     <div class="actions">
-      <button type="submit" class="btn">Ver sugerencias</button>
-      <button type="button" class="btn ghost" id="btnSave">Guardar esta consulta</button>
+      <button type="submit" class="btn">Ver sugerencias y guardar</button>
       <button type="button" class="btn ghost" id="btnClear">Borrar todo</button>
-      <button type="button" class="btn ghost" id="btnExample">Cargar ejemplo</button>
       <span class="flag" id="exampleFlag" hidden>Ejemplo cargado · cambie los datos por los suyos</span>
     </div>
     <p class="note" id="parseNote"></p>
@@ -277,7 +261,7 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
 <!-- 2 LINEA DE TIEMPO -->
 <section data-view="linea" hidden style="display:grid;gap:22px">
   <div class="section-head">
-    <div class="eyebrow">2 · Línea de tiempo</div>
+    <div class="eyebrow">2 · Plan de Siembra</div>
     <h1>Su cultivo semana por semana</h1>
     <p class="muted">Escoja el cultivo, la fecha en que sembró y el tamaño del terreno. Verá la etapa, las tareas, qué vigilar, el riesgo del clima y las plagas de cada semana.</p>
   </div>
@@ -288,7 +272,7 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
       <div class="field"><label for="c-ha">Tamaño del terreno</label><input id="c-ha" placeholder="Ej: 1 hectárea o 2 manzanas"><small>Ajusta semilla y cosecha</small></div>
     </div>
     <div class="actions">
-      <button type="submit" class="btn">Ver línea de tiempo</button>
+      <button type="submit" class="btn">Ver plan de siembra</button>
       <button type="button" class="btn ghost" id="calSave">Guardar como mi siembra</button>
     </div>
     <div id="calMine"></div>
@@ -299,8 +283,8 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
 <!-- 3 SALUD -->
 <section data-view="salud" hidden style="display:grid;gap:22px">
   <div class="section-head">
-    <div class="eyebrow">3 · Salud del cultivo</div>
-    <h1>Tome una foto de la planta</h1>
+    <div class="eyebrow">3 · Consulta</div>
+    <h1>Consulte la salud de su cultivo</h1>
     <p class="muted">Acérquese a la hoja, fruto o tallo con el problema, con buena luz y enfocado.</p>
   </div>
   <div class="grid2">
@@ -346,8 +330,8 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
   </div>
   <div class="form" style="gap:12px">
     <div class="fields">
-      <div class="field"><label for="k-lugar">Lugar</label><input id="k-lugar" list="dl-lugar" placeholder="Ej: Liberia"></div>
-      <div class="field"><label for="k-enso">Temporada (promedio normal)</label><select id="k-enso"><option value="normal">Año normal</option><option value="nino">El Niño</option><option value="nina">La Niña</option></select></div>
+      <div class="field"><label for="k-canton">Cantón</label><select id="k-canton"></select></div>
+      <div class="field"><label for="k-distrito">Distrito</label><select id="k-distrito"></select></div>
     </div>
     <div class="actions"><button class="btn small" id="kGo" type="button">Ver clima</button></div>
   </div>
@@ -403,7 +387,7 @@ footer{font-size:14.5px;color:var(--muted);border-top:1px solid var(--line);padd
     <p class="muted" id="pLead">Instituciones públicas y empresas costarricenses. Confirme sucursal, horario y contacto antes de ir.</p>
   </div>
   <div class="chips" id="pFilter"></div>
-  <div class="cards" id="pList"></div>
+  <div style="display:grid;gap:26px" id="pList"></div>
   <div class="panel">
     <h3>Mis proveedores</h3>
     <p class="muted">Agregue el agroservicio o vivero de su comunidad.</p>
@@ -472,6 +456,9 @@ const RADWS={
  ZS:{rad:[19,20,20,18,16,15,16,15,14,14,15,17],ws:[1.6,1.7,1.6,1.5,1.3,1.2,1.3,1.2,1.1,1.1,1.2,1.4]},
 };
 Object.entries(RADWS).forEach(([k,v])=>Object.assign(ZONAS[k],v));
+/* Cantones y distritos (División Territorial Administrativa). z: zona climática, a: altitud de la cabecera (m), la/lo: coordenadas.
+   En cada distrito, [nombre, zona, altitud] cuando difiere mucho de la cabecera. */
+const CANTONES=[{"n":"Abangares","p":"Guancaste","z":"G","a":100,"la":10.27,"lo":-84.96,"d":[["Juntas"],["Sierra"],["San Juan"],["Colorado"]]},{"n":"Acosta","p":"San José","z":"VC","a":1100,"la":9.795,"lo":-84.165,"d":[["San Ignacio"],["Guaitil"],["Palmichal"],["Cangrejal"],["Sabanillas"]]},{"n":"Alajuela","p":"Alajuela","z":"VC","a":950,"la":10.016,"lo":-84.214,"d":[["Alajuela"],["San José"],["Carrizal"],["San Antonio"],["Guácima"],["San Isidro"],["Sabanilla"],["San Rafael"],["Río Segundo"],["Desamparados"],["Turrúcares"],["Tambor"],["Garita"],["Sarapiquí","AL",1500]]},{"n":"Alajuelita","p":"San José","z":"VC","a":1200,"la":9.902,"lo":-84.1,"d":[["Alajuelita"],["San Josecito"],["San Antonio"],["Concepción"],["San Felipe"]]},{"n":"Alvarado","p":"Cartago","z":"AL","a":1750,"la":9.95,"lo":-83.8,"d":[["Pacayas"],["Cervantes","AL",1500],["Capellades","AL",1800]]},{"n":"Aserrí","p":"San José","z":"VC","a":1300,"la":9.858,"lo":-84.096,"d":[["Aserrí"],["Tarbaca"],["Vuelta de Jorco"],["San Gabriel"],["Legua"],["Monterrey"],["Salitrillos"]]},{"n":"Atenas","p":"Alajuela","z":"VC","a":700,"la":9.978,"lo":-84.38,"d":[["Atenas"],["Jesús"],["Mercedes"],["San Isidro"],["Concepción"],["San José"],["Santa Eulalia"],["Escobal"]]},{"n":"Bagaces","p":"Guancaste","z":"G","a":80,"la":10.53,"lo":-85.255,"d":[["Bagaces"],["Fortuna"],["Mogote"],["Río Naranjo"]]},{"n":"Barva","p":"Heredia","z":"VC","a":1250,"la":10.02,"lo":-84.12,"d":[["Barva"],["San Pedro"],["San Pablo"],["San Roque"],["Santa Lucía"],["San José de la Montaña","AL",1550]]},{"n":"Belén","p":"Heredia","z":"VC","a":930,"la":9.98,"lo":-84.18,"d":[["San Antonio"],["La Ribera"],["La Asunción"]]},{"n":"Buenos Aires","p":"Puntarenas","z":"PS","a":400,"la":9.17,"lo":-83.33,"d":[["Buenos Aires"],["Volcán"],["Potrero Grande"],["Boruca"],["Pilas"],["Colinas"],["Changena"],["Briolley"],["Brunka"]]},{"n":"Carrillo","p":"Guancaste","z":"G","a":50,"la":10.43,"lo":-85.55,"d":[["Filadelfia"],["Palmira"],["Sardinal"],["Belén"]]},{"n":"Cartago","p":"Cartago","z":"AL","a":1435,"la":9.864,"lo":-83.919,"d":[["Oriental"],["Occidental"],["Carmen"],["San Nicolás"],["Aguacaliente (San Francisco)"],["Guadalupe (Arenilla)"],["Corralillo","AL",1800],["Tierra Blanca","AL",2100],["Dulce Nombre","AL",1550],["Llano Grande","AL",2200],["Quebradilla"]]},{"n":"Cañas","p":"Guancaste","z":"G","a":90,"la":10.428,"lo":-85.092,"d":[["Cañas"],["Palmira"],["San Miguel"],["Bebedero"],["Porozal"]]},{"n":"Corredores","p":"Puntarenas","z":"ZS","a":30,"la":8.58,"lo":-82.96,"d":[["Corredor"],["La Cuesta"],["Canoas"],["Laurel"]]},{"n":"Coto Brus","p":"Puntarenas","z":"PS","a":1000,"la":8.83,"lo":-82.97,"d":[["San Vito"],["Sabalito"],["Aguabuena"],["Limoncito"],["Pittier"]]},{"n":"Curridabat","p":"San José","z":"VC","a":1200,"la":9.915,"lo":-84.035,"d":[["Curridabat"],["Granadilla"],["Sánchez"],["Tirrases"]]},{"n":"Desamparados","p":"San José","z":"VC","a":1160,"la":9.897,"lo":-84.063,"d":[["Desamparados"],["San Miguel"],["San Juan de Dios"],["San Rafael Arriba"],["San Antonio"],["Frailes"],["Patarrá"],["San Cristóbal"],["Rosario"],["Damas"],["San Rafael Abajo"],["Gravilias"],["Los Guido"]]},{"n":"Dota","p":"San José","z":"LS","a":1550,"la":9.65,"lo":-83.97,"d":[["Santa María"],["Jardín"],["Copey","AL",2100]]},{"n":"El Guarco","p":"Cartago","z":"AL","a":1400,"la":9.84,"lo":-83.95,"d":[["El Tejar"],["San Isidro"],["Tobosi"],["Patio de Agua"]]},{"n":"Escazú","p":"San José","z":"VC","a":1100,"la":9.918,"lo":-84.14,"d":[["Escazú"],["San Antonio"],["San Rafael"]]},{"n":"Esparza","p":"Puntarenas","z":"PC","a":210,"la":9.993,"lo":-84.665,"d":[["Espíritu Santo"],["San Juan Grande"],["Macacona"],["San Rafael"],["San Jerónimo"]]},{"n":"Flores","p":"Heredia","z":"VC","a":1100,"la":10.0,"lo":-84.155,"d":[["San Joaquín de Flores"],["Barrantes"],["Llorente"]]},{"n":"Garabito","p":"Puntarenas","z":"PC","a":20,"la":9.62,"lo":-84.63,"d":[["Jacó"],["Tárcoles"]]},{"n":"Goicoechea","p":"San José","z":"VC","a":1200,"la":9.948,"lo":-84.05,"d":[["Guadalupe"],["San Francisco"],["Calle Blancos"],["Mata de Plátano"],["Ipís"],["Rancho Redondo"],["Purral"]]},{"n":"Golfito","p":"Puntarenas","z":"ZS","a":20,"la":8.64,"lo":-83.18,"d":[["Golfito"],["Guaycará"],["Pavón"]]},{"n":"Grecia","p":"Alajuela","z":"VC","a":1000,"la":10.073,"lo":-84.312,"d":[["Grecia"],["San Isidro"],["San José"],["San Roque"],["Tacares"],["Puente de Piedra"],["Bolívar"]]},{"n":"Guatuso","p":"Alajuela","z":"ZN","a":60,"la":10.665,"lo":-84.82,"d":[["San Rafael"],["Buenavista"],["Cote"],["Katira"]]},{"n":"Guácimo","p":"Limón","z":"CA","a":100,"la":10.21,"lo":-83.68,"d":[["Guácimo"],["Mercedes"],["Pocora"],["Río Jiménez"],["Duacari"]]},{"n":"Heredia","p":"Heredia","z":"VC","a":1150,"la":9.998,"lo":-84.117,"d":[["Heredia"],["Mercedes"],["San Francisco"],["Ulloa"],["Varablanca","AL",1800]]},{"n":"Hojancha","p":"Guancaste","z":"G","a":300,"la":10.06,"lo":-85.42,"d":[["Hojancha"],["Monte Romo"],["Puerto Carrillo"],["Huacas"]]},{"n":"Jiménez","p":"Cartago","z":"CA","a":1150,"la":9.9,"lo":-83.75,"d":[["Juan Viñas"],["Tucurrique"],["Pejibaye"]]},{"n":"La Cruz","p":"Guancaste","z":"G","a":250,"la":11.07,"lo":-85.63,"d":[["La Cruz"],["Santa Cecilia"],["Garita"],["Santa Elena"]]},{"n":"La Unión","p":"Cartago","z":"VC","a":1350,"la":9.906,"lo":-83.99,"d":[["Tres Ríos"],["San Diego"],["San Juan"],["San Rafael"],["Concepción"],["Dulce Nombre"],["San Ramón"],["Río Azul"]]},{"n":"León Cortés","p":"San José","z":"LS","a":1700,"la":9.69,"lo":-84.05,"d":[["San Pablo"],["San Andrés"],["Llano Bonito"],["San Isidro"],["Santa Cruz"],["San Antonio"]]},{"n":"Liberia","p":"Guancaste","z":"G","a":145,"la":10.635,"lo":-85.437,"d":[["Liberia"],["Cañas Dulces"],["Mayorga"],["Nacascolo"],["Curubande"]]},{"n":"Limón","p":"Limón","z":"CA","a":5,"la":9.99,"lo":-83.035,"d":[["Limón"],["Valle La Estrella"],["Río Blanco"],["Matama"]]},{"n":"Los Chiles","p":"Alajuela","z":"ZN","a":40,"la":11.033,"lo":-84.713,"d":[["Los Chiles"],["Caño Negro"],["El Amparo"],["San Jorge"]]},{"n":"Matina","p":"Limón","z":"CA","a":30,"la":10.08,"lo":-83.29,"d":[["Matina"],["Batán"],["Carrandi"]]},{"n":"Montes de Oca","p":"San José","z":"VC","a":1200,"la":9.935,"lo":-84.05,"d":[["San Pedro"],["Sabanilla"],["Mercedes"],["San Rafael"]]},{"n":"Montes de Oro","p":"Puntarenas","z":"PC","a":300,"la":10.07,"lo":-84.73,"d":[["Miramar"],["La Unión"],["San Isidro"]]},{"n":"Monteverde","p":"Puntarenas","z":"ZN","a":1400,"la":10.3,"lo":-84.82,"d":[["Monteverde"]]},{"n":"Mora","p":"San José","z":"VC","a":850,"la":9.912,"lo":-84.245,"d":[["Colón"],["Guayabo"],["Tabarcia"],["Piedras Negras"],["Picagres"],["Jaris"]]},{"n":"Moravia","p":"San José","z":"VC","a":1200,"la":9.96,"lo":-84.05,"d":[["San Vicente"],["San Jerónimo"],["La Trinidad"]]},{"n":"Nandayure","p":"Guancaste","z":"G","a":100,"la":10.0,"lo":-85.27,"d":[["Carmona"],["Santa Rita"],["Zapotal"],["San Pablo"],["Porvenir"],["Bejuco"]]},{"n":"Naranjo","p":"Alajuela","z":"VC","a":1040,"la":10.1,"lo":-84.38,"d":[["Naranjo"],["San Miguel"],["San José"],["Cirrí Sur"],["San Jerónimo"],["San Juan"],["El Rosario"],["Palmitos"]]},{"n":"Nicoya","p":"Guancaste","z":"G","a":120,"la":10.148,"lo":-85.452,"d":[["Nicoya"],["Mansión"],["San Antonio"],["Quebrada Honda"],["Sámara"],["Nosara"],["Belén de Nosarita"]]},{"n":"Oreamuno","p":"Cartago","z":"AL","a":1500,"la":9.88,"lo":-83.9,"d":[["San Rafael"],["Cot","AL",2000],["Potrero Cerrado","AL",2200],["Cipreses","AL",2000],["Santa Rosa","AL",1900]]},{"n":"Orotina","p":"Alajuela","z":"PC","a":220,"la":9.913,"lo":-84.525,"d":[["Orotina"],["El Mastate"],["Hacienda Vieja"],["Coyolar"],["La Ceiba"]]},{"n":"Osa","p":"Puntarenas","z":"ZS","a":30,"la":8.96,"lo":-83.47,"d":[["Puerto Cortés"],["Palmar"],["Sierpe"],["Bahía Ballena"],["Piedras Blancas"]]},{"n":"Palmares","p":"Alajuela","z":"VC","a":1000,"la":10.058,"lo":-84.433,"d":[["Palmares"],["Zaragoza"],["Buenos Aires"],["Santiago"],["Candelaria"],["Esquipulas"],["La Granja"]]},{"n":"Paraíso","p":"Cartago","z":"AL","a":1350,"la":9.839,"lo":-83.866,"d":[["Paraíso"],["Santiago"],["Orosi","AL",1050],["Cachí","AL",1000],["Llanos de Santa Lucía"]]},{"n":"Parrita","p":"Puntarenas","z":"PC","a":20,"la":9.52,"lo":-84.32,"d":[["Parrita"]]},{"n":"Pococí","p":"Limón","z":"CA","a":260,"la":10.21,"lo":-83.79,"d":[["Guápiles"],["Jiménez"],["Rita"],["Roxana"],["Cariari"],["Colorado"]]},{"n":"Poás","p":"Alajuela","z":"VC","a":1200,"la":10.07,"lo":-84.24,"d":[["San Pedro"],["San Juan"],["San Rafael"],["Carrillos"],["Sabana Redonda","AL",1500]]},{"n":"Puerto Jiménez","p":"Puntarenas","z":"ZS","a":10,"la":8.535,"lo":-83.31,"d":[["Puerto Jiménez"]]},{"n":"Puntarenas","p":"Puntarenas","z":"PC","a":5,"la":9.976,"lo":-84.833,"d":[["Puntarenas"],["Pitahaya"],["Chomes"],["Lepanto","G",50],["Paquera","G",50],["Manzanillo"],["Guacimal"],["Barranca"],["Isla del Coco"],["Cóbano","G",50],["Chacarita"],["Chira","G",10],["Acapulco"],["El Roble"],["Arancibia"]]},{"n":"Puriscal","p":"San José","z":"VC","a":1100,"la":9.846,"lo":-84.313,"d":[["Santiago"],["Mercedes Sur"],["Barbacoas"],["Grifo Alto"],["San Rafael"],["Candelarita"],["Desamparaditos"],["San Antonio"],["Chires"]]},{"n":"Pérez Zeledón","p":"San José","z":"PS","a":700,"la":9.374,"lo":-83.703,"d":[["San Isidro de El General"],["General"],["Daniel Flores"],["Rivas","PS",900],["San Pedro"],["Platanares"],["Pejibaye"],["Cajón"],["Barú","ZS",300],["Río Nuevo"],["Páramo","PS",1400]]},{"n":"Quepos","p":"Puntarenas","z":"ZS","a":20,"la":9.43,"lo":-84.16,"d":[["Quepos"],["Savegre"],["Naranjito"]]},{"n":"Río Cuarto","p":"Alajuela","z":"ZN","a":400,"la":10.35,"lo":-84.215,"d":[["Río Cuarto"],["Santa Rita"],["Santa Isabel"]]},{"n":"San Carlos","p":"Alajuela","z":"ZN","a":650,"la":10.323,"lo":-84.427,"d":[["Quesada"],["Florencia","ZN",300],["Buenavista"],["Aguas Zarcas","ZN",500],["Venecia","ZN",400],["Pital","ZN",150],["La Fortuna","ZN",250],["La Tigra","ZN",300],["La Palmera"],["Venado"],["Cutris","ZN",100],["Monterrey","ZN",200],["Pocosol","ZN",100]]},{"n":"San Isidro","p":"Heredia","z":"VC","a":1350,"la":10.02,"lo":-84.06,"d":[["San Isidro"],["San José"],["Concepción"],["San Francisco"]]},{"n":"San José","p":"San José","z":"VC","a":1150,"la":9.933,"lo":-84.08,"d":[["Carmen"],["Merced"],["Hospital"],["Catedral"],["Zapote"],["San Francisco de Dos Ríos"],["Uruca"],["Mata Redonda"],["Pavas"],["Hatillo"],["San Sebastián"]]},{"n":"San Mateo","p":"Alajuela","z":"PC","a":300,"la":9.94,"lo":-84.52,"d":[["San Mateo"],["Desmonte"],["Jesús María"]]},{"n":"San Pablo","p":"Heredia","z":"VC","a":1150,"la":9.995,"lo":-84.095,"d":[["San Pablo"],["Rincón de Sabanilla"]]},{"n":"San Rafael","p":"Heredia","z":"VC","a":1300,"la":10.01,"lo":-84.1,"d":[["San Rafael"],["San Josecito"],["Santiago"],["Los Ángeles"],["Concepción"]]},{"n":"San Ramón","p":"Alajuela","z":"VC","a":1050,"la":10.087,"lo":-84.47,"d":[["San Ramón"],["Santiago"],["San Juan"],["Piedades Norte"],["Piedades Sur"],["San Rafael"],["San Isidro"],["Los Ángeles"],["Alfaro"],["Volio"],["Concepción"],["Zapotal"],["Peñas Blancas"]]},{"n":"Santa Ana","p":"San José","z":"VC","a":900,"la":9.932,"lo":-84.182,"d":[["Santa Ana"],["Salitral"],["Pozos"],["Uruca"],["Piedades"],["Brasil"]]},{"n":"Santa Bárbara","p":"Heredia","z":"VC","a":1250,"la":10.035,"lo":-84.157,"d":[["Santa Bárbara"],["San Pedro"],["San Juan"],["Jesús"],["Santo Domingo"],["Puraba"]]},{"n":"Santa Cruz","p":"Guancaste","z":"G","a":55,"la":10.26,"lo":-85.585,"d":[["Santa Cruz"],["Bolsón"],["Veintisiete de Abril"],["Tempate"],["Cartagena"],["Cuajiniquil"],["Diriá"],["Cabo Velas"],["Tamarindo"]]},{"n":"Santo Domingo","p":"Heredia","z":"VC","a":1150,"la":9.98,"lo":-84.09,"d":[["Santo Domingo"],["San Vicente"],["San Miguel"],["Paracito"],["Santo Tomás"],["Santa Rosa"],["Tures"],["Para"]]},{"n":"Sarapiquí","p":"Heredia","z":"ZN","a":100,"la":10.452,"lo":-84.02,"d":[["Puerto Viejo"],["La Virgen"],["Horquetas"],["Llanuras del Gaspar"],["Cureña"]]},{"n":"Sarchí (Valverde Vega)","p":"Alajuela","z":"VC","a":1000,"la":10.088,"lo":-84.346,"d":[["Sarchí Norte"],["Sarchí Sur"],["Toro Amarillo"],["San Pedro"],["Rodríguez"]]},{"n":"Siquirres","p":"Limón","z":"CA","a":70,"la":10.1,"lo":-83.51,"d":[["Siquirres"],["Pacuarito"],["Florida"],["Germania"],["Cairo"],["Alegría"]]},{"n":"Talamanca","p":"Limón","z":"CA","a":50,"la":9.62,"lo":-82.85,"d":[["Bratsi"],["Sixaola"],["Cahuita"],["Telire"]]},{"n":"Tarrazú","p":"San José","z":"LS","a":1500,"la":9.656,"lo":-84.02,"d":[["San Marcos"],["San Lorenzo"],["San Carlos"]]},{"n":"Tibás","p":"San José","z":"VC","a":1150,"la":9.957,"lo":-84.08,"d":[["San Juan"],["Cinco Esquinas"],["Anselmo Llorente"],["León XIII"],["Colima"]]},{"n":"Tilarán","p":"Guancaste","z":"G","a":560,"la":10.47,"lo":-84.97,"d":[["Tilarán"],["Quebrada Grande"],["Tronadora"],["Santa Rosa"],["Líbano"],["Tierras Morenas"],["Arenal","ZN",550]]},{"n":"Turrialba","p":"Cartago","z":"CA","a":650,"la":9.906,"lo":-83.683,"d":[["Turrialba"],["La Suiza"],["Peralta"],["Santa Cruz","AL",1500],["Santa Teresita","CA",1300],["Pavones"],["Tuis"],["Tayutic"],["Santa Rosa"],["Tres Equis"],["La Isabel"],["Chirripó"]]},{"n":"Turrubares","p":"San José","z":"PC","a":400,"la":9.8,"lo":-84.48,"d":[["San Pablo"],["San Pedro"],["San Juan de Mata"],["San Luis"],["Carara","PC",100]]},{"n":"Upala","p":"Alajuela","z":"ZN","a":50,"la":10.898,"lo":-85.017,"d":[["Upala"],["Aguas Claras"],["San José (Pizote)"],["Bijagua","ZN",450],["Delicias"],["Dos Ríos"],["Yolillal"]]},{"n":"Vázquez de Coronado","p":"San José","z":"VC","a":1380,"la":9.973,"lo":-84.0,"d":[["San Isidro"],["San Rafael"],["Dulce Nombre de Jesús"],["Patalillo"],["Cascajal"]]},{"n":"Zarcero","p":"Alajuela","z":"AL","a":1730,"la":10.185,"lo":-84.393,"d":[["Zarcero"],["Laguna"],["Tapesco"],["Guadalupe"],["Palmira","AL",1600],["Zapote"],["Brisas"]]}];
 const LUGARES=[
  ["Liberia","G",145],["Nicoya","G",120],["Santa Cruz","G",55],["Cañas","G",90],["Bagaces","G",80],["Tilarán","G",560],["Abangares","G",100],["La Cruz","G",250],["Carrillo","G",50],["Hojancha","G",300],["Nandayure","G",100],["Guanacaste","G",145],
  ["Puntarenas","PC",5],["Esparza","PC",210],["Orotina","PC",220],["San Mateo","PC",300],["Garabito","PC",20],["Jacó","PC",20],["Parrita","PC",20],["Quepos","PC",20],["Pacífico Central","PC",200],
@@ -881,7 +868,7 @@ const PROVS=[
  {n:"CoopeAgri R.L.",c:"insumos",o:"Cooperativa de Pérez Zeledón (desde 1962) con servicios para productores asociados.",z:["PS"],u:gs("CoopeAgri R.L. Pérez Zeledón")},
  {n:"Agroservicio de su comunidad",c:"insumos",o:"Compare precios con el sondeo de InfoAgro y pida la factura electrónica para llevar sus costos.",z:null,u:null},
 ];
-const PCAT={todos:"Todos",insumos:"Insumos",ayuda:"Asesoría y análisis",apoyo:"Créditos y proyectos",venta:"Venta y precios"};
+const PCAT={todos:"Todos",ayuda:"Asesoría técnica y análisis de suelo",apoyo:"Créditos y proyectos",insumos:"Insumos agrícolas",venta:"Precios y venta de cosecha"};
 
 const TIPOS_GASTO=["Semilla","Fertilizantes","Plaguicidas","Herbicidas","Mano de obra","Riego","Transporte","Maquinaria","Otros"];
 
@@ -1108,26 +1095,26 @@ function nextCrops(ev,ctx){const fams=NEXT_FAM[ev.crop.fam]||[];const c2={...ctx
  return CULTIVOS.filter(c=>fams.includes(c.fam)&&c.id!==ev.crop.id&&(!c.cover||ev.crop.nNeed==="alto")).map(c=>evaluate(c,c2)).sort((a,b)=>b.score-a.score).slice(0,2);}
 
 /* ===================== 1 · SUGERENCIAS ===================== */
-const FIELDS=[{id:"f-lugar",w:20,hint:"el lugar"},{id:"f-mes",w:13,hint:"el mes de siembra"},{id:"f-terreno",w:15,hint:"cómo es el terreno"},{id:"f-ultimo",w:11,hint:"lo último que sembró"},{id:"f-ha",w:9,hint:"el tamaño del terreno"},{id:"f-producto",w:8,hint:"el producto que quiere sembrar"},{id:"f-tipo",w:7,hint:"para qué es la cosecha"},{id:"f-cantidad",w:5,hint:"cuánto quiere cosechar"},{id:"f-inicio",w:6,hint:"la fecha de inicio"},{id:"f-fin",w:6,hint:"la fecha límite"}];
+const FIELDS=[{id:"f-mes",w:20,hint:"el mes de siembra"},{id:"f-ultimo",w:20,hint:"lo último que sembró"},{id:"f-ha",w:15,hint:"el tamaño del terreno"},{id:"f-producto",w:10,hint:"el producto que quiere sembrar"}];
 function precision(){let got=0,missing=null;for(const f of FIELDS){const el=$("#"+f.id);const has=el.value.trim()!=="";el.parentElement.classList.toggle("filled",has);if(has)got+=f.w;else if(!missing)missing=f;}
- if(!$("#f-mes").value.trim()&&$("#f-inicio").value.trim())got+=13;return{got:Math.min(100,got),missing};}
+ got+=35;return{got:Math.min(100,got),missing};}
 function updateMeter(){const{got,missing}=precision();$("#meterFill").style.width=got+"%";const lvl=got>=75?"alta":got>=45?"media":"baja";
  $("#meterTxt").textContent=`Precisión ${lvl} (${got}%)`+(missing&&got<100?` · Agregue ${missing.hint} para mejorarla`:"");}
-function readCtx(){const notes=[];const place=findPlace($("#f-lugar").value);let zone="VC",alt=ZONAS.VC.alt,placeName=null;
- if(place){zone=place[1];alt=place[2];placeName=place[0];}else if($("#f-lugar").value.trim())notes.push(`No reconocimos “${$("#f-lugar").value.trim()}”; usamos el Valle Central. Pruebe con el nombre del cantón.`);
- const terr=parseTerrain($("#f-terreno").value);if(terr.alt)alt=terr.alt;
- const ini=parseDay($("#f-inicio").value),fin=parseDay($("#f-fin").value);
- let month=parseMonth($("#f-mes").value),monthSrc="mes indicado";if(ini){month=ini.mo;monthSrc="fecha de inicio";}if(month===null){month=new Date().getMonth();monthSrc="mes actual";}
- let windowDays=null;
- if(fin){const start=ini?ini.doy:(()=>{let d=1;for(let i=0;i<month;i++)d+=DIAS[i];return d;})();windowDays=fin.doy-start;if(windowDays<=0)windowDays+=365;}
- else if($("#f-fin").value.trim())notes.push("No entendimos la fecha límite; escriba por ejemplo “30 de agosto”.");
- if($("#f-inicio").value.trim()&&!ini)notes.push("No entendimos la fecha de inicio; escriba por ejemplo “15 de mayo”.");
+function placeFrom(cSel,dSel){const c=CANTONES.find(x=>x.n===$(cSel).value);if(!c)return null;const d=c.d.find(x=>x[0]===$(dSel).value)||c.d[0];
+ return{canton:c.n,distrito:d[0],zone:d[1]||c.z,alt:d[2]||c.a,la:c.la,lo:c.lo,name:`${d[0]}, ${c.n}`};}
+function fillCantones(cSel,dSel,cv,dv){const provs=[...new Set(CANTONES.map(c=>c.p))].sort((a,b)=>a.localeCompare(b,"es"));$(cSel).innerHTML=provs.map(pv=>`<optgroup label="${esc(pv)}">${CANTONES.filter(c=>c.p===pv).map(c=>`<option value="${esc(c.n)}">${esc(c.n)}</option>`).join("")}</optgroup>`).join("");if(cv)$(cSel).value=cv;fillDistritos(cSel,dSel,dv);}
+function fillDistritos(cSel,dSel,dv){const c=CANTONES.find(x=>x.n===$(cSel).value)||CANTONES[0];$(dSel).innerHTML=c.d.map(d=>`<option value="${esc(d[0])}">${esc(d[0])}</option>`).join("");if(dv&&c.d.some(d=>d[0]===dv))$(dSel).value=dv;}
+function nearestCanton(la,lo){let best=null,bd=1e9;CANTONES.forEach(c=>{const d=(c.la-la)**2+((c.lo-lo)*Math.cos(la*Math.PI/180))**2;if(d<bd){bd=d;best=c;}});return{c:best,km:Math.sqrt(bd)*111};}
+function readCtx(){const notes=[];const pl=placeFrom("#f-canton","#f-distrito");let zone="VC",alt=ZONAS.VC.alt,placeName=null;
+ if(pl){zone=pl.zone;alt=pl.alt;placeName=pl.name;}
+ let month=parseMonth($("#f-mes").value),monthSrc="mes indicado";if(month===null){month=new Date().getMonth();monthSrc="mes actual";}
+ const windowDays=null;
  const haP=parseHa($("#f-ha").value);const last=findCrop($("#f-ultimo").value);
  if($("#f-ultimo").value.trim()&&!last)notes.push(`No tenemos “${$("#f-ultimo").value.trim()}” en la lista; la rotación se calcula sin ese dato.`);
  const want=findCrop($("#f-producto").value);
  if($("#f-producto").value.trim()&&!want)notes.push(`Aún no evaluamos “${$("#f-producto").value.trim()}”. Disponibles: ${CULTIVOS.filter(c=>!c.cover).map(c=>c.n.toLowerCase()).join(", ")}.`);
- return{zone,alt,placeName,month,monthSrc,windowDays,ha:haP?haP.ha:null,haTxt:haP?haP.txt:null,last,want,purpose:parsePurpose($("#f-tipo").value),goalKg:parseKg($("#f-cantidad").value),
-  slope:terr.slope,soil:terr.soil,poorDrain:terr.poorDrain,riego:terr.riego,enso:$("#f-enso").value,prior:$("#f-prior").value,notes};}
+ return{zone,alt,placeName,canton:pl&&pl.canton,distrito:pl&&pl.distrito,month,monthSrc,windowDays,ha:haP?haP.ha:null,haTxt:haP?haP.txt:null,last,want,purpose:null,goalKg:null,
+  slope:null,soil:null,poorDrain:false,riego:null,enso:"normal",prior:"equilibrio",notes};}
 
 let CTX=null,RESULTS=[],SEL=null,LIST=[];
 /* Clima para las sugerencias: promedio mensual de los datos diarios de NASA POWER (18 meses) + proyección de los próximos 2 meses.
@@ -1158,7 +1145,7 @@ async function run(){
  LIST=pinned?[pinned,...top.filter(r=>r.crop.id!==pinned.crop.id)].slice(0,6):top;SEL=LIST[0];
  $("#parseNote").textContent=ctx.notes.join(" ");
  renderSummary();renderCards(pinned);renderStrategies();
- if(!$("#k-lugar").value)$("#k-lugar").value=ctx.placeName||"";
+ if(ctx.canton&&!K_TOUCHED){fillCantones("#k-canton","#k-distrito",ctx.canton,ctx.distrito);}
  refreshAll();
 }
 function renderSummary(){const c=CTX,z=ZONAS[c.zone],m=c.clim[c.month],mc=c.clim;const chips=[];
@@ -1168,7 +1155,7 @@ function renderSummary(){const c=CTX,z=ZONAS[c.zone],m=c.clim[c.month],mc=c.clim
  if(c.last)chips.push(`<span class="chip">Antes: ${c.last.n.toLowerCase()}</span>`);if(c.purpose)chips.push(`<span class="chip">Para ${PURP_TXT[c.purpose]}</span>`);
  if(c.enso!=="normal")chips.push(`<span class="chip warn">${c.enso==="nino"?"Año El Niño":"Año La Niña"}</span>`);
  const nextR=mc[(c.month+1)%12].r,trend=nextR>m.r*1.3?"y las lluvias aumentan el mes siguiente":nextR<m.r*.7?"y las lluvias bajan el mes siguiente":"con lluvias parecidas el mes siguiente";
- $("#summary").innerHTML=`<div class="panel"><div class="eyebrow">Clima esperado · ${c.monthSrc} · ${LIVE[c.zone]?"NASA POWER":"referencia"}</div><h2>${cap(MES[c.month])}: ${season(m.r).toLowerCase()}</h2>
+ $("#summary").innerHTML=`<div class="panel"><div class="eyebrow">Clima esperado · ${c.monthSrc} · ${c.climSrc==="nasa"?"NASA POWER":"referencia"}</div><h2>${cap(MES[c.month])}: ${season(m.r).toLowerCase()}</h2>
   <p class="muted">En ${MES[c.month]} se esperan unos ${Math.round(m.r)} mm de lluvia ${trend}.</p>
   <div class="facts"><div class="fact"><b>${m.t.toFixed(1)} °C</b><span>Temperatura promedio</span></div><div class="fact"><b>${Math.round(m.r)} mm</b><span>Lluvia del mes</span></div>
   <div class="fact"><b>${m.tmin.toFixed(0)}–${m.tmax.toFixed(0)} °C</b><span>Mínima y máxima</span></div><div class="fact"><b>${Math.round(m.h)} %</b><span>Humedad relativa</span></div></div>
@@ -1222,7 +1209,7 @@ function card(ev,isPinned,rank,i){const c=CTX,cr=ev.crop,ha=ev.ha;const harvestK
   <div><h4>Qué sembrar después</h4>${longC?'<p class="muted">Cultivo permanente: no se rota. Diversifique con árboles de sombra y cultivos asociados en las calles.</p>':""}<ul class="why">${nexts.map(nx=>`<li><b>${nx.crop.n}</b> en ${MES[nx.idx[0]]} (puntaje ${nx.score}): ${FAM[nx.crop.fam].toLowerCase()} después de ${FAM[cr.fam].toLowerCase()}.</li>`).join("")}</ul></div>
  </div></details>
  <details><summary>Árboles para sembrar cerca (sombra y control de plagas)</summary><div class="det">${treeHTML(cr,c,ha)}</div></details>
- <div class="c-actions"><button class="link" type="button" data-plan="${i}">Ver línea de tiempo</button><button class="link" type="button" data-sel="${i}">Ver meses en el gráfico</button><button class="link" type="button" data-say="${i}">Escuchar</button></div></article>`;}
+ <div class="c-actions"><button class="link" type="button" data-plan="${i}">Ver plan de siembra</button><button class="link" type="button" data-sel="${i}">Ver meses en el gráfico</button><button class="link" type="button" data-say="${i}">Escuchar</button></div></article>`;}
 function renderStrategies(){const c=CTX;const base=c.last||c.want||RESULTS[0].crop;const evBase=evaluate(base,c);
  const best=RESULTS.find(r=>(!c.last||r.crop.fam!==c.last.fam)&&r.crop.id!==base.id)||RESULTS[0];
  const legs=CULTIVOS.filter(k=>k.nfix&&k.id!==base.id).map(k=>evaluate(k,c)).sort((a,b)=>b.score-a.score);const leg=legs.find(l=>!l.crop.cover&&l.score>=55)||legs.find(l=>l.crop.cover)||legs[0];
@@ -1238,13 +1225,15 @@ function renderStrategies(){const c=CTX;const base=c.last||c.want||RESULTS[0].cr
   <dl><dt>Por qué</dt><dd>${p.why}</dd><dt>Evidencia</dt><dd>${evid}</dd><dt>Beneficios</dt><dd>${p.ben}</dd><dt>Falta información</dt><dd>${p.gap}</dd><dt>Revisar en campo</dt><dd>${topR.length?cap(topR.join(" y "))+"; consultar con el técnico del MAG.":"Sin riesgos fuertes; confirmar con su experiencia en el lote."}</dd></dl></div>`;}).join("");}
 
 /* Guardar consulta */
-function saveQuery(){if(!CTX){toast("Primero vea las sugerencias.");return;}
- const form={};FIELDS.forEach(f=>form[f.id]=$("#"+f.id).value);form["f-enso"]=$("#f-enso").value;form["f-prior"]=$("#f-prior").value;
+let LAST_SAVED="";
+function saveQuery(auto){if(!CTX){toast("Primero vea las sugerencias.");return;}
+ const form={};FIELDS.forEach(f=>form[f.id]=$("#"+f.id).value);form["f-canton"]=$("#f-canton").value;form["f-distrito"]=$("#f-distrito").value;form["f-prior"]=$("#f-prior").value;
+ const sig=JSON.stringify(form);if(sig===LAST_SAVED){return;}LAST_SAVED=sig;
  const top=LIST.map(ev=>({id:ev.crop.id,n:ev.crop.n,ic:ev.crop.ic,quim:ev.crop.quim,score:ev.score,level:ev.level,cosechaKg:Math.round(ev.yHa*1000*ev.ha),costo:Math.round(ev.costTotHa*ev.ha),ganancia:Math.round(ev.marginHa*ev.ha),why:ev.why.slice(0,3),riesgos:[...ev.risks.map(r=>r.n),...ev.pests.filter(p=>p.s==="Alta").map(p=>p.n)].slice(0,3)}));
  const m=CTX.clim[CTX.month];
  Store.put(uid("consulta"),{kind:"consulta",fecha:iso(new Date()),form,lugar:CTX.placeName||ZONAS[CTX.zone].n,zona:ZONAS[CTX.zone].n,mes:MES[CTX.month],ha:CTX.haTxt||"1 ha (por defecto)",
   clima:{t:+m.t.toFixed(1),r:Math.round(m.r),h:Math.round(m.h)},top,precision:precision().got});
- toast("Consulta guardada. La encuentra en “Guardadas”.");}
+ toast("Sugerencias listas y consulta guardada en “Guardadas”.");}
 
 /* ===================== 2 · CALENDARIO ===================== */
 let PLAN_CUR=null;
@@ -1309,7 +1298,7 @@ function renderPlan(plan,sid){
   <div class="fact"><b>${fdate(plan.start)}</b><span>Siembra</span></div><div class="fact"><b>${fdate(hs)}</b><span>Empieza la cosecha</span></div><div class="fact"><b>${fdate(end)}</b><span>${plan.crop.d>365?"Fin del primer año":`Fin del ciclo (${plan.D} días)`}</span></div>
   <div class="fact"><b>${kgFmt(yHa*1000*plan.ha)}</b><span>${plan.crop.per?"Cosecha por año en producción":"Cosecha estimada"}</span></div><div class="fact"><b>${cnt.Alto} / ${cnt.Medio} / ${cnt.Bajo}</b><span>Semanas de atención alta / media / baja</span></div></div>
   <div class="stagebar" aria-label="Etapas fenológicas">${bar}${dayNow>=0&&dayNow<=plan.D?`<span class="today" style="left:calc(${pct}% - 1px)" title="Hoy"></span>`:""}</div>
-  <p class="note">Riesgos según el clima promedio de ${CTX?esc(ZONAS[CTX.zone].n):"Valle Central"} (cámbielo en Sugerencias). Los productos sugeridos son biológicos o de bajo impacto ambiental, con cantidades calculadas para ${nf(plan.ha,2)} ha y ${VOL[PLAN[plan.crop.id].tipo]} L de agua por hectárea. Las cantidades de fertilizante son un programa orientativo: ajústelas con un análisis de suelo (INTA o UCR). Las dosis de productos son orientativas: use siempre la dosis de la etiqueta del producto que compre (cambia según la marca y la concentración), solo productos registrados ante el SFE, con equipo de protección, y confirme con el técnico del MAG. Aplique solo si en el recorrido encuentra la plaga.</p>
+  <p class="note">Riesgos según el clima promedio de ${CTX?esc(ZONAS[CTX.zone].n):"Valle Central"} (cámbielo en Mi Siembra). Los productos sugeridos son biológicos o de bajo impacto ambiental, con cantidades calculadas para ${nf(plan.ha,2)} ha y ${VOL[PLAN[plan.crop.id].tipo]} L de agua por hectárea. Las cantidades de fertilizante son un programa orientativo: ajústelas con un análisis de suelo (INTA o UCR). Las dosis de productos son orientativas: use siempre la dosis de la etiqueta del producto que compre (cambia según la marca y la concentración), solo productos registrados ante el SFE, con equipo de protección, y confirme con el técnico del MAG. Aplique solo si en el recorrido encuentra la plaga.</p>
   <div class="actions"><button class="btn small ghost" id="calSay" type="button">Escuchar esta semana</button>${started?`<button class="btn small ghost" id="tlAll" type="button">${TL_ALL?"Ocultar semanas pasadas":"Ver semanas pasadas"}</button>`:""}${sid?`<a class="btn small ghost" href="#costos" data-open-s="${sid}">Ver costos de esta siembra</a>`:""}</div></div>
   <div class="weeks">${vis.map(wk=>`<div class="week att-${wk.att} ${wk.w===curW?"now":""} ${wk.harvest?"harvest":""}" id="wk${wk.w}">
    <div class="wk-n"><b>${wk.w<0?"Antes":"Sem "+wk.w}</b><span>${fdShort(wk.ds)} – ${fdShort(wk.de)}</span>${wk.w>=0?`<span>Día ${wk.dFrom}–${wk.dTo}</span>`:""}<span class="att ${wk.att}">Atención ${wk.att.toLowerCase()}</span></div>
@@ -1394,9 +1383,9 @@ function renderSaved(){const q=Store.all("consulta");
  <span class="pill info">${x.clima?`${x.clima.t} °C · ${x.clima.r} mm`:""}</span></div>
  <div class="scroll"><table><thead><tr><th>Cultivo</th><th class="n">Puntaje</th><th>Riesgo</th><th class="n">Cosecha</th><th class="n">Ganancia</th></tr></thead><tbody>${(x.top||[]).map(t=>`<tr><td>${t.ic||""} ${esc(t.n)}</td><td class="n">${t.score}</td><td><span class="pill ${t.level}">${t.level}</span></td><td class="n">${kgFmt(t.cosechaKg)}</td><td class="n ${t.ganancia>=0?"pos":"neg"}">${crc(t.ganancia)}</td></tr>`).join("")}</tbody></table></div>
  ${x.top&&x.top[0]?`<p style="font-size:15px"><b>Mejor opción: ${esc(x.top[0].n)}.</b> ${esc((x.top[0].why||[]).join(". "))}${x.top[0].riesgos&&x.top[0].riesgos.length?`. Cuidado con: ${esc(x.top[0].riesgos.join(", ").toLowerCase())}.`:""}</p>`:""}
- <div class="c-actions"><button class="link" type="button" data-open="${x.id}">Abrir en Sugerencias</button><button class="link" type="button" data-qsay="${x.id}">Escuchar</button>${delBtn(x.id)}</div></div>`).join("")
- :`<div class="empty"><b>No tiene consultas guardadas</b><span>En “Sugerencias”, llene los datos de su finca y toque “Guardar esta consulta”.</span><a class="btn small" href="#sugerencias">Ir a Sugerencias</a></div>`;
- $$("#savedList [data-open]").forEach(b=>b.addEventListener("click",()=>{const x=Store.get(b.dataset.open);if(!x)return;FIELDS.forEach(f=>$("#"+f.id).value=x.form[f.id]||"");$("#f-enso").value=x.form["f-enso"]||"normal";$("#f-prior").value=x.form["f-prior"]||"equilibrio";$("#exampleFlag").hidden=true;updateMeter();run();location.hash="#sugerencias";}));
+ <div class="c-actions"><button class="link" type="button" data-open="${x.id}">Abrir en Mi Siembra</button><button class="link" type="button" data-qsay="${x.id}">Escuchar</button>${delBtn(x.id)}</div></div>`).join("")
+ :`<div class="empty"><b>No tiene consultas guardadas</b><span>En “Mi Siembra”, llene los datos de su finca y toque “Guardar esta consulta”.</span><a class="btn small" href="#sugerencias">Ir a Mi Siembra</a></div>`;
+ $$("#savedList [data-open]").forEach(b=>b.addEventListener("click",()=>{const x=Store.get(b.dataset.open);if(!x)return;FIELDS.forEach(f=>$("#"+f.id).value=x.form[f.id]||"");if(x.form["f-canton"])fillCantones("#f-canton","#f-distrito",x.form["f-canton"],x.form["f-distrito"]);$("#f-prior").value=x.form["f-prior"]||"equilibrio";LAST_SAVED=JSON.stringify(x.form);$("#exampleFlag").hidden=true;updateMeter();run();location.hash="#sugerencias";}));
  $$("#savedList [data-qsay]").forEach(b=>b.addEventListener("click",()=>{const x=Store.get(b.dataset.qsay);if(!x||!x.top)return;const t=x.top[0];speakText(`Consulta de ${x.lugar}, siembra en ${x.mes}. La mejor opción es ${t.n}, con puntaje ${t.score} y riesgo ${t.level.toLowerCase()}. ${(t.why||[]).join(". ")}.`);}));
  wireDel("#savedList");}
 
@@ -1502,7 +1491,7 @@ async function getForecast(zk,alt,enso,D){
  const P=projectDays(D,zk,alt,enso,from,to);
  FCAST[key]={rows:P.rows,A:P.A,nd:P.nd,cn:P.cn,from,to,today};return FCAST[key];
 }
-let K_PLACE=null,H_TIP=null,tipWired=false;
+let K_TOUCHED=false,K_PLACE=null,H_TIP=null,tipWired=false;
 function tipHTML(i){const{items,normals,v,g}=H_TIP;const it=items[i];if(!it)return"";const V=HVARS[v];const fut=it.fut>=.5;
  const f=x=>x==null||!isFinite(x)?"—":(v==="lluvia"||v==="hum"?Math.round(x).toLocaleString("es-CR"):x.toFixed(1));
  let h=`<b>${esc(periodLabel(it.d0,g))}</b><span>${fut?"Proyección":"Histórico"}${g!=="dia"?` · ${it.n} días`:""}</span>`;
@@ -1516,7 +1505,7 @@ function wireTip(){if(tipWired)return;tipWired=true;const box=$("#hChart");
   const maxX=box.scrollLeft+box.clientWidth-tip.offsetWidth-6;if(x>maxX)x=e.clientX-r.left+box.scrollLeft-tip.offsetWidth-14;tip.style.left=Math.max(box.scrollLeft+4,x)+"px";tip.style.top=Math.max(0,y)+"px";};
  box.addEventListener("pointermove",move);box.addEventListener("pointerdown",move);box.addEventListener("pointerleave",()=>{const tip=$("#hTip");if(tip)tip.hidden=true;});}
 async function renderHistoric(zk,alt){
- const D=await getDaily(zk,alt);const enso=$("#k-enso").value;const F=await getForecast(zk,alt,enso,D);const V=HVARS[HV];
+ const D=await getDaily(zk,alt);const enso="normal";const F=await getForecast(zk,alt,enso,D);const V=HVARS[HV];
  const all=D.rows.concat(F.rows);const items=aggregate(all,HG);const hItems=aggregate(D.rows,HG);
  $("#hVar").innerHTML=Object.entries(HVARS).map(([k,x])=>`<button type="button" class="chipbtn" aria-pressed="${k===HV}" data-hv="${k}">${x.n}</button>`).join("");
  $("#hGran").innerHTML=Object.entries(HGRAN).map(([k,x])=>`<button type="button" class="chipbtn" aria-pressed="${k===HG}" data-hg="${k}">${x}</button>`).join("");
@@ -1547,7 +1536,7 @@ async function renderHistoric(zk,alt){
  const nx=F.rows.filter(r=>r.d>F.today);const sum=k=>nx.reduce((a,r)=>a+(r[k]||0),0),mean=k=>sum(k)/Math.max(1,nx.length);
  const rain=sum("lluvia"),rainN=nx.reduce((a,r)=>a+F.nd(r.d,F.cn).lluvia,0),ratio=rainN>0?rain/rainN:1;
  const tmx=Math.max(...nx.map(r=>r.tmax)),tmn=Math.min(...nx.map(r=>r.tmin));
- $("#fRange").textContent=`Del ${fdate(addDays(F.today,1))} al ${fdate(F.to)} · ${$("#k-enso").selectedOptions[0].textContent.toLowerCase()}`;
+ $("#fRange").textContent=`Del ${fdate(addDays(F.today,1))} al ${fdate(F.to)}`;
  $("#hFut").innerHTML=`<div class="fact"><b>${Math.round(rain).toLocaleString("es-CR")} mm</b><span>Lluvia esperada en 60 días</span></div><div class="fact"><b class="${ratio<.8?"neg":ratio>1.2?"":"pos"}">${ratio>=1?"+":""}${Math.round((ratio-1)*100)} %</b><span>Comparado con lo normal</span></div>
  <div class="fact"><b>${mean("temp").toFixed(1)} °C</b><span>Temperatura promedio (mín ${tmn.toFixed(0)}, máx ${tmx.toFixed(0)})</span></div><div class="fact"><b>${Math.round(mean("hum"))} %</b><span>Humedad promedio</span></div>
  <div class="fact"><b>${mean("rad").toFixed(1)} MJ/m²</b><span>Radiación solar por día</span></div><div class="fact"><b>${mean("viento").toFixed(1)} km/h</b><span>Viento promedio</span></div>
@@ -1560,9 +1549,9 @@ function setPasteUrls(){}
 function copyText(txt,el){try{navigator.clipboard.writeText(txt).then(()=>toast("Enlace copiado."),()=>selectEl(el));}catch(e){selectEl(el);}}
 function selectEl(el){const r=document.createRange();r.selectNodeContents(el);const s=window.getSelection();s.removeAllRanges();s.addRange(r);toast("Enlace seleccionado: cópielo con el menú del teléfono.");}
 async function renderClima(){
- const place=findPlace($("#k-lugar").value)||(CTX?[CTX.placeName||ZONAS[CTX.zone].n,CTX.zone,CTX.alt]:["Valle Central","VC",1150]);
- const[pn,zk,alt]=place;K_PLACE={pn,zk,alt};setPasteUrls();await tryPower(zk);const enso=$("#k-enso").value;const c=buildClimate(zk,alt,enso);const z=ZONAS[zk];
- $("#climTitle").textContent=`Clima de ${pn}`;$("#climLead").textContent=`${z.n} · ≈ ${alt.toLocaleString("es-CR")} m de altitud · ${enso==="normal"?"año normal":enso==="nino"?"ajustado para El Niño":"ajustado para La Niña"}`;
+ const kp=placeFrom("#k-canton","#k-distrito");const place=kp?[kp.name,kp.zone,kp.alt]:(CTX?[CTX.placeName||ZONAS[CTX.zone].n,CTX.zone,CTX.alt]:["Valle Central","VC",1150]);
+ const[pn,zk,alt]=place;K_PLACE={pn,zk,alt};setPasteUrls();await tryPower(zk);const enso="normal";const c=buildClimate(zk,alt,enso);const z=ZONAS[zk];
+ $("#climTitle").textContent=`Clima de ${pn}`;$("#climLead").textContent=`${z.n} · ≈ ${alt.toLocaleString("es-CR")} m de altitud`;
  const tot=c.reduce((a,m)=>a+m.r,0);const wet=c.reduce((b,m,i)=>m.r>c[b].r?i:b,0),dry=c.reduce((b,m,i)=>m.r<c[b].r?i:b,0);
  const hot=c.reduce((b,m,i)=>m.tmax>c[b].tmax?i:b,0),cold=c.reduce((b,m,i)=>m.tmin<c[b].tmin?i:b,0);const dryM=c.filter(m=>m.r<60).length;
  $("#kFacts").innerHTML=`<div class="fact"><b>${Math.round(tot).toLocaleString("es-CR")} mm</b><span>Lluvia del año</span></div><div class="fact"><b>${cap(MES[wet])}</b><span>Mes más lluvioso (${Math.round(c[wet].r)} mm)</span></div>
@@ -1587,7 +1576,7 @@ function renderCostos(){
  if(!S_SEL||!Store.get(S_SEL))S_SEL=(ss.find(s=>s.estado!=="finalizada")||ss[0]||{}).id||null;
  $("#sTabs").innerHTML=ss.map(s=>{const c=cropById(s.cultivo);return`<button type="button" class="chipbtn" aria-pressed="${s.id===S_SEL}" data-s="${s.id}">${c?.ic||""} ${esc(s.nombre||c?.n||"")}${s.estado==="finalizada"?" · finalizada":""}</button>`;}).join("");
  $$("#sTabs [data-s]").forEach(b=>b.addEventListener("click",()=>{S_SEL=b.dataset.s;INV=null;renderCostos();}));
- if(!S_SEL){$("#sOut").innerHTML=`<div class="empty"><b>Aún no tiene siembras</b><span>Cree una arriba, o desde “Línea de tiempo” toque “Guardar como mi siembra”.</span></div>`;return;}
+ if(!S_SEL){$("#sOut").innerHTML=`<div class="empty"><b>Aún no tiene siembras</b><span>Cree una arriba, o desde “Plan de Siembra” toque “Guardar como mi siembra”.</span></div>`;return;}
  const s=Store.get(S_SEL);const crop=cropById(s.cultivo);const{g,por,tot}=siembraTotals(S_SEL);const fin=s.estado==="finalizada";
  const maxT=Math.max(1,...Object.values(por));const est=s.estimado||0;
  $("#sOut").innerHTML=`<div class="panel">
@@ -1595,7 +1584,7 @@ function renderCostos(){
   <div class="facts four"><div class="fact"><b>${crc(fin?s.totalCostos:tot)}</b><span>Gastado ${fin?"en total":"hasta hoy"}</span></div><div class="fact"><b>${crc(est)}</b><span>Costo estimado del ciclo</span></div>
   ${fin?`<div class="fact"><b>${crc(s.ingreso)}</b><span>Venta (${kgFmt(s.cosechaKg)})</span></div><div class="fact"><b class="${s.ganancia>=0?"pos":"neg"}">${crc(s.ganancia)}</b><span>Ganancia final</span></div>`:`<div class="fact"><b>${est?Math.round(tot/est*100):0} %</b><span>Del estimado usado</span></div><div class="fact"><b>${g.length}</b><span>Gastos anotados</span></div>`}</div>
   ${Object.keys(por).length?`<div style="display:grid;gap:8px">${TIPOS_GASTO.filter(t=>por[t]).map(t=>`<div class="hbar"><span>${t}</span><span class="t"><i style="width:${por[t]/maxT*100}%"></i></span><b>${crc(por[t])}</b></div>`).join("")}</div>`:""}
-  <div class="actions"><button class="btn small ghost" type="button" id="sPlan">Ver línea de tiempo</button>${delBtn(S_SEL)}</div></div>
+  <div class="actions"><button class="btn small ghost" type="button" id="sPlan">Ver plan de siembra</button>${delBtn(S_SEL)}</div></div>
  ${fin?"":`<div class="panel"><h3>Agregar gasto</h3>
   <label class="photo-drop" for="g-foto" style="min-height:110px"><input id="g-foto" type="file" accept="image/*" capture="environment"><span id="gPrev" style="display:grid;gap:6px;justify-items:center"><b>Tomar foto de la factura</b><span class="note">La app intenta leer el proveedor, el total y separa por tipo de gasto</span></span></label>
   <div id="invOut"></div>
@@ -1647,14 +1636,15 @@ Montos con impuesto incluido, sin símbolos ni separadores de miles. Clasifica c
 
 /* ===================== 7 · PROVEEDORES ===================== */
 let P_CAT="todos";
-function renderProv(){const zk=CTX?CTX.zone:null;
+function renderProv(){const zk=CTX?CTX.zone:null;const az=(x,y)=>x.localeCompare(y,"es",{sensitivity:"base"});
  $("#pFilter").innerHTML=Object.entries(PCAT).map(([k,v])=>`<button type="button" class="chipbtn" aria-pressed="${k===P_CAT}" data-pc="${k}">${v}</button>`).join("");
  $$("#pFilter [data-pc]").forEach(b=>b.addEventListener("click",()=>{P_CAT=b.dataset.pc;renderProv();}));
- $("#pLead").textContent=`Instituciones públicas y empresas costarricenses${zk?`; primero las que atienden ${ZONAS[zk].n}`:""}. Confirme sucursal, horario y contacto antes de ir.`;
- const list=PROVS.filter(p=>P_CAT==="todos"||p.c===P_CAT).map(p=>({...p,here:!p.z||(zk&&p.z.includes(zk))})).sort((a,b)=>(b.here?1:0)-(a.here?1:0));
- $("#pList").innerHTML=list.map(p=>`<div class="card"><div class="item-head"><h3>${esc(p.n)}</h3><span class="pill ${p.c==="insumos"?"mid":p.c==="ayuda"?"ok":"info"}">${PCAT[p.c]}</span></div><p style="font-size:15.5px">${esc(p.o)}</p>
- <p class="note">${p.z?(p.here?"Tiene presencia en su zona":"Zonas: "+p.z.map(k=>ZONAS[k].n.split(" (")[0]).join(", ")):"Todo el país"}</p>${p.u?`<a class="link" href="${p.u}" target="_blank" rel="noopener" style="justify-self:start;text-decoration:none">${p.u.includes("google.com/search")?"Buscar en internet":"Abrir sitio web"}</a>`:""}</div>`).join("");
- const mine=Store.all("proveedor");
+ $("#pLead").textContent="Instituciones públicas y empresas costarricenses, agrupadas por lo que ofrecen y en orden alfabético. Confirme sucursal, horario y contacto antes de ir.";
+ const cats=Object.keys(PCAT).filter(k=>k!=="todos"&&(P_CAT==="todos"||P_CAT===k)).sort((x,y)=>az(PCAT[x],PCAT[y]));
+ $("#pList").innerHTML=cats.map(cat=>{const list=PROVS.filter(p=>p.c===cat).sort((x,y)=>az(x.n,y.n));if(!list.length)return"";
+  return`<div style="grid-column:1/-1;display:grid;gap:12px"><h2 style="font-size:22px">${PCAT[cat]}</h2><div class="cards">${list.map(p=>{const here=!p.z||(zk&&p.z.includes(zk));
+   return`<div class="card"><h3>${esc(p.n)}</h3><p style="font-size:15.5px">${esc(p.o)}</p><p class="note">${p.z?(here?"Tiene presencia en su zona":"Zonas: "+p.z.map(k=>ZONAS[k].n.split(" (")[0]).join(", ")):"Todo el país"}</p>${p.u?`<a class="link" href="${p.u}" target="_blank" rel="noopener" style="justify-self:start;text-decoration:none">${p.u.includes("google.com/search")?"Buscar en internet":"Abrir sitio web"}</a>`:""}</div>`;}).join("")}</div></div>`;}).join("");
+ const mine=Store.all("proveedor").sort((x,y)=>az(x.n||"",y.n||""));
  $("#pMine").innerHTML=mine.map(p=>`<div class="item"><div class="item-head"><b>${esc(p.n)}</b>${delBtn(p.id)}</div><span style="font-size:15px">${esc(p.v||"")}${p.l?` · ${esc(p.l)}`:""}</span>${p.t?`<span style="font-size:16px;user-select:all"><b>Tel.</b> ${esc(p.t)}</span>`:""}</div>`).join("");
  wireDel("#pMine");}
 
@@ -1692,7 +1682,7 @@ const ICON={
  proveedores:'<path d="M4 9.5l1.5-5h13L20 9.5"/><path d="M4 9.5h16a2.7 2.7 0 0 1-5.3 0 2.7 2.7 0 0 1-5.4 0A2.7 2.7 0 0 1 4 9.5z"/><path d="M5.5 12.5V20h13v-7.5M10 20v-4.5h4V20"/>',
  historial:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
 };
-const VIEWS=[["sugerencias","Sugerencias"],["linea","Línea de tiempo"],["salud","Salud"],["guardadas","Guardadas"],["clima","Clima"],["costos","Costos"],["proveedores","Proveedores"],["historial","Historial"]];
+const VIEWS=[["sugerencias","Mi Siembra"],["linea","Plan de Siembra"],["salud","Consulta"],["guardadas","Guardadas"],["clima","Clima"],["costos","Costos"],["proveedores","Proveedores"],["historial","Historial"]];
 $("#tabs").innerHTML=VIEWS.map(([k,v])=>`<a class="tab" href="#${k}" data-tab="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>${v}</a>`).join("");
 function show(){const h=(location.hash||"").slice(1);const v=VIEWS.some(x=>x[0]===h)?h:"sugerencias";
  $$("[data-view]").forEach(s=>s.hidden=s.dataset.view!==v);$$("[data-tab]").forEach(t=>t.setAttribute("aria-current",t.dataset.tab===v?"page":"false"));
@@ -1704,27 +1694,36 @@ function refreshAll(){const h=(location.hash||"").slice(1);
  if(PLAN_CUR&&PLAN_CUR.sid&&!Store.get(PLAN_CUR.sid)){PLAN_CUR=null;$("#calOut").innerHTML="";}}
 
 /* ===================== ARRANQUE ===================== */
-const EXAMPLE={"f-lugar":"Pérez Zeledón","f-mes":"mayo","f-ha":"2 manzanas","f-terreno":"ondulado, franco, sin riego","f-ultimo":"maíz","f-producto":"frijol","f-tipo":"venta","f-cantidad":"","f-inicio":"","f-fin":""};
-function fill(o){for(const[k,v]of Object.entries(o))$("#"+k).value=v;$("#f-enso").value="normal";updateMeter();}
-function saveDraft(){try{const o={};FIELDS.forEach(f=>o[f.id]=$("#"+f.id).value);o.enso=$("#f-enso").value;o.prior=$("#f-prior").value;localStorage.setItem("siembra-clara",JSON.stringify(o));}catch(e){}}
-function loadDraft(){try{const o=JSON.parse(localStorage.getItem("siembra-clara")||"null");if(o&&FIELDS.some(f=>o[f.id])){FIELDS.forEach(f=>$("#"+f.id).value=o[f.id]||"");$("#f-enso").value=o.enso||"normal";$("#f-prior").value=o.prior||"equilibrio";return true;}}catch(e){}return false;}
+const EXAMPLE={"f-mes":"mayo","f-ha":"2 manzanas","f-ultimo":"maíz","f-producto":"frijol"};
+function fill(o){for(const[k,v]of Object.entries(o))$("#"+k).value=v;fillCantones("#f-canton","#f-distrito","Pérez Zeledón","San Isidro de El General");$("#f-prior").value="equilibrio";updateMeter();}
+function saveDraft(){try{const o={};FIELDS.forEach(f=>o[f.id]=$("#"+f.id).value);o.canton=$("#f-canton").value;o.distrito=$("#f-distrito").value;o.prior=$("#f-prior").value;localStorage.setItem("siembra-clara",JSON.stringify(o));}catch(e){}}
+function loadDraft(){try{const o=JSON.parse(localStorage.getItem("siembra-clara")||"null");if(o&&(o.canton||FIELDS.some(f=>o[f.id]))){FIELDS.forEach(f=>$("#"+f.id).value=o[f.id]||"");fillCantones("#f-canton","#f-distrito",o.canton,o.distrito);$("#f-prior").value=o.prior||"equilibrio";return true;}}catch(e){}return false;}
 
-$("#dl-lugar").innerHTML=LUGARES.map(p=>`<option>${p[0]}</option>`).join("");
+fillCantones("#f-canton","#f-distrito","Pérez Zeledón","San Isidro de El General");fillCantones("#k-canton","#k-distrito","Pérez Zeledón","San Isidro de El General");
 $("#dl-cultivo").innerHTML=CULTIVOS.map(c=>`<option>${c.n}</option>`).join("");
 const cropOpts=CULTIVOS.map(c=>`<option value="${c.id}">${c.n}</option>`).join("");
 $("#c-cultivo").innerHTML=cropOpts;$("#s-cultivo").innerHTML=cropOpts;$("#h-cultivo").innerHTML=`<option value="">No sé / otro</option>`+cropOpts;
 $("#c-inicio").value=iso(new Date());$("#s-inicio").value=iso(new Date());
 FIELDS.forEach(f=>$("#"+f.id).addEventListener("input",()=>{updateMeter();$("#exampleFlag").hidden=true;}));
-$("#form").addEventListener("submit",e=>{e.preventDefault();saveDraft();run();});
-$("#f-enso").addEventListener("change",()=>{saveDraft();run();});$("#f-prior").addEventListener("change",()=>{saveDraft();run();});
-$("#btnSave").addEventListener("click",saveQuery);
-$("#btnClear").addEventListener("click",()=>{FIELDS.forEach(f=>$("#"+f.id).value="");$("#f-enso").value="normal";$("#exampleFlag").hidden=true;updateMeter();saveDraft();run();});
-$("#btnExample").addEventListener("click",()=>{fill(EXAMPLE);$("#exampleFlag").hidden=false;run();});
+$("#form").addEventListener("submit",async e=>{e.preventDefault();saveDraft();await run();saveQuery(true);});
+$("#f-canton").addEventListener("change",()=>{fillDistritos("#f-canton","#f-distrito");$("#exampleFlag").hidden=true;$("#geoMsg").textContent="";});
+$("#f-distrito").addEventListener("change",()=>{$("#exampleFlag").hidden=true;});
+$("#k-canton").addEventListener("change",()=>{K_TOUCHED=true;fillDistritos("#k-canton","#k-distrito");renderClima();});
+$("#k-distrito").addEventListener("change",()=>{K_TOUCHED=true;renderClima();});
+$("#btnGeo").addEventListener("click",()=>{const m=$("#geoMsg");
+ if(!navigator.geolocation){m.textContent="Este teléfono no permite usar la ubicación. Escoja el cantón.";return;}
+ m.textContent="Buscando su ubicación…";
+ try{navigator.geolocation.getCurrentPosition(pos=>{const{latitude:la,longitude:lo}=pos.coords;const r=nearestCanton(la,lo);
+   if(!r.c||r.km>60){m.textContent="Su ubicación parece estar fuera de Costa Rica. Escoja el cantón.";return;}
+   fillCantones("#f-canton","#f-distrito",r.c.n);m.textContent=`Ubicación encontrada: cantón ${r.c.n}. Escoja su distrito.`;$("#exampleFlag").hidden=true;},
+  ()=>{m.textContent="No se pudo usar la ubicación (permiso negado o sin señal). Escoja el cantón.";},{timeout:10000,maximumAge:600000});}
+ catch(e){m.textContent="No se pudo usar la ubicación. Escoja el cantón.";}});
+$("#f-prior").addEventListener("change",()=>{saveDraft();run();});
+$("#btnClear").addEventListener("click",()=>{FIELDS.forEach(f=>$("#"+f.id).value="");$("#f-prior").value="equilibrio";$("#exampleFlag").hidden=true;updateMeter();saveDraft();run();});
 $("#calForm").addEventListener("submit",e=>{e.preventDefault();const f=calFromForm();renderPlan(buildPlan(f.crop,f.start,f.ha,calCtx()),null);});
 $("#calSave").addEventListener("click",()=>{const f=calFromForm();const hp=parseHa($("#c-ha").value);const id=newSiembra(f.crop.id,iso(f.start),f.ha,hp?hp.txt:"1 ha",$("#s-nombre").value.trim());S_SEL=id;renderPlan(buildPlan(f.crop,f.start,f.ha,calCtx()),id);toast("Siembra guardada. Ya puede marcar tareas y anotar gastos.");});
 $("#sNew").addEventListener("click",()=>{const c=$("#s-cultivo").value;const hp=parseHa($("#s-ha").value);const ha=hp?hp.ha:1;const id=newSiembra(c,$("#s-inicio").value||iso(new Date()),ha,hp?hp.txt:"1 ha",$("#s-nombre").value.trim());S_SEL=id;$("#s-nombre").value="";toast("Siembra creada.");});
 $("#kGo").addEventListener("click",renderClima);
-$("#k-enso").addEventListener("change",renderClima);
 $("#pAdd").addEventListener("click",()=>{const n=$("#p-n").value.trim();if(!n){toast("Escriba el nombre del proveedor.");return;}Store.put(uid("proveedor"),{kind:"proveedor",n,v:$("#p-v").value.trim(),t:$("#p-t").value.trim(),l:$("#p-l").value.trim(),fecha:iso(new Date())});["#p-n","#p-v","#p-t","#p-l"].forEach(s=>$(s).value="");toast("Proveedor agregado.");});
 initSalud();
 Store.on(refreshAll);
